@@ -31,7 +31,7 @@ export default class ChatComponent extends Component {
             const document = window.document;
             setTimeout(() => {
                 const userImg = document.getElementById('userImg-' + (this.state.messageList.length - 1));
-                const video = document.getElementById('video-' + this.props.user.getConnectionId());
+                const video = document.getElementById('video-' + data.streamId);
                 const avatar = userImg.getContext('2d');
                 avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
                 this.props.messageReceived();
@@ -56,7 +56,7 @@ export default class ChatComponent extends Component {
         if (this.props.user && this.state.message) {
             let message = this.state.message.replace(/ +(?= )/g, '');
             if (message !== '' && message !== ' ') {
-                const data = { message: message, nickname: this.props.user.getNickname() };
+                const data = { message: message, nickname: this.props.user.getNickname(), streamId: this.props.user.getStreamManager().stream.streamId };
                 this.props.user.getStreamManager().stream.session.signal({
                     data: JSON.stringify(data),
                     type: 'chat',

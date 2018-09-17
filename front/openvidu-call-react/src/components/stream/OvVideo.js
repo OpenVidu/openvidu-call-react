@@ -27,7 +27,7 @@ export default class OvVideoComponent extends Component {
         return (
             <video
                 autoPlay={true}
-                id={'video-' + this.props.user.getConnectionId()}
+                id={'video-' + this.props.user.getStreamManager().stream.streamId}
                 ref={this.videoRef}
                 muted={this.props.mutedSound}
             />
