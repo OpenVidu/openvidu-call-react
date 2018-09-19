@@ -1,38 +1,34 @@
 {
   "name": "openvidu-react",
   "version": "0.0.1",
-  "description": "OpenVidu React library",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
-  "author": "OpenVidu",
   "repository": {
-    "type": "git",
-    "url": "git://github.com/OpenVidu/openvidu"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build-examples": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "build": "rimraf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "react-scripts": "^1.1.4",
-    "rimraf": "^2.6.2"
+    "type": "git"
   },
   "dependencies": {
-    "@material-ui/core": "^1.5.0",
-    "@material-ui/icons": "^2.0.3",
+    "@material-ui/core": "^3.1.0",
+    "@material-ui/icons": "^3.0.1",
     "axios": "^0.18.0",
     "jquery": "^3.3.1",
     "openvidu-browser": "^2.4.0",
-    "typedoc": "^0.5.10",
     "typeface-roboto": "0.0.54"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "create-library": "npm run build && npm pack"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
+    "react-scripts": "1.1.5"
   }
 }
