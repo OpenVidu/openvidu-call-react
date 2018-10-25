@@ -69,7 +69,7 @@ class VideoRoomComponent extends Component {
         this.joinSession();
     }
 
-    componentDidUnmount() {
+    componentWillUnmount() {
         window.removeEventListener('beforeunload', this.onbeforeunload);
         window.removeEventListener('resize', this.updateLayout);
         window.removeEventListener('resize', this.checkSize);
