@@ -52,7 +52,6 @@ export default class StreamComponent extends Component {
     }
 
     render() {
-        
         return (
             <div className="OT_widget-container">
                 <div className="pointer nickname">
@@ -69,7 +68,7 @@ export default class StreamComponent extends Component {
                                 value={this.state.nickname}
                                 onChange={this.handleChange}
                                 onKeyPress={this.handlePressKey}
-                                required                                
+                                required
                             />
                             {!this.state.isFormValid &&
                                 this.state.nickname.length <= 3 && (
@@ -104,12 +103,13 @@ export default class StreamComponent extends Component {
                                 </div>
                             ) : null}
                         </div>
-
-                        {!this.props.user.isLocal() ? (
-                            <IconButton color="inherit" id="volumeButton" onClick={this.toggleSound}>
-                                {this.state.mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
-                            </IconButton>
-                        ) : null}
+                        <div>
+                            {!this.props.user.isLocal() && (
+                                <IconButton id="volumeButton" onClick={this.toggleSound}>
+                                    {this.state.mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
+                                </IconButton>
+                            )}
+                        </div>
                     </div>
                 ) : null}
             </div>

@@ -78,6 +78,7 @@ video {
     bottom: 45px;
     right: 1px;
     z-index: 1000;
+    color: #ffffff;
 }
 /* Contains the video element, used to fix video letter-boxing */
 .OT_widget-container {
