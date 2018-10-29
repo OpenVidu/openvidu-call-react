@@ -140,7 +140,6 @@ class VideoRoomComponent extends Component {
             resolution: '640x480',
             frameRate: 30,
             insertMode: 'APPEND',
-            mirror: false,
         });
 
         if (this.state.session.capabilities.publish) {
