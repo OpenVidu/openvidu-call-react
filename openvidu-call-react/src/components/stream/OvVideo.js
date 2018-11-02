@@ -23,13 +23,6 @@ export default class OvVideoComponent extends Component {
         }
     }
 
-    componentDidUpdate() {
-        console.log('componentDidUpdate OvVideoComponent will do forceUpdate');
-        setTimeout(() => {
-            this.forceUpdate();
-        }, 2500);
-    }
-
     render() {
         return (
             <video
