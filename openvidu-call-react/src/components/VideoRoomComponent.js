@@ -220,6 +220,8 @@ class VideoRoomComponent extends Component {
 
     subscribeToStreamCreated() {
         this.state.session.on('streamCreated', (event) => {
+            console.log('streamCreated event', event);
+
             const subscriber = this.state.session.subscribe(event.stream, undefined);
             var subscribers = this.state.subscribers;
             subscriber.on('streamPlaying', (e) => {
@@ -255,6 +257,8 @@ class VideoRoomComponent extends Component {
     subscribeToStreamDestroyed() {
         // On every Stream destroyed...
         this.state.session.on('streamDestroyed', (event) => {
+            console.log('streamDestroyed event', event);
+
             // Remove the stream from 'subscribers' array
             this.deleteSubscriber(event.stream);
             setTimeout(() => {
@@ -267,6 +271,8 @@ class VideoRoomComponent extends Component {
 
     subscribeToUserChanged() {
         this.state.session.on('signal:userChanged', (event) => {
+            console.log('signal:userChanged event', event);
+
             let remoteUsers = this.state.subscribers;
             remoteUsers.forEach((user) => {
                 if (user.getConnectionId() === event.from.connectionId) {
