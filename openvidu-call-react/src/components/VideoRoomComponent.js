@@ -222,49 +222,37 @@ class VideoRoomComponent extends Component {
         this.state.session.on('streamCreated', (event) => {
             console.log('streamCreated event', event);
 
-            const streamInterval = setInterval(() => {
+            const subscriber = this.state.session.subscribe(event.stream, undefined);
+            var subscribers = this.state.subscribers;
+            subscriber.on('streamPlaying', (e) => {
+                console.log('subscriber streamPlaying event', e);
 
-                const subscriber = this.state.session.subscribe(event.stream, undefined);
-                var subscribers = this.state.subscribers;
-
-                this.forceUpdate();
-                // When the HTML video has been appended to DOM...
-                subscriber.on('videoElementCreated', (/* event */) => {
-                    // Add a new HTML element for the user's name and nickname over its video
-                    // this.appendUserData(event.element, subscriber.stream.connection);
-                    this.forceUpdate();
-                    clearInterval(streamInterval);
-                });
-
-                subscriber.on('streamPlaying', (e) => {
-                    this.checkSomeoneShareScreen();
-                    subscriber.videos[0].video.parentElement.classList.remove('custom-class');
-                });
-                const newUser = new UserModel();
-                newUser.setStreamManager(subscriber);
-                newUser.setConnectionId(event.stream.connection.connectionId);
-                newUser.setType('remote');
-                const nickname = event.stream.connection.data.split('%')[0];
-                newUser.setNickname(JSON.parse(nickname).clientData);
-                subscribers.push(newUser);
-                this.setState(
-                    {
-                        subscribers: subscribers,
-                    },
-                    () => {
-                        if (this.state.localUser) {
-                            this.sendSignalUserChanged({
-                                isAudioActive: this.state.localUser.isAudioActive(),
-                                isVideoActive: this.state.localUser.isVideoActive(),
-                                nickname: this.state.localUser.getNickname(),
-                                isScreenShareActive: this.state.localUser.isScreenShareActive(),
-                            });
-                        }
-                        this.updateLayout();
-                    },
-                );
-
-            }, 500);
+                this.checkSomeoneShareScreen();
+                subscriber.videos[0].video.parentElement.classList.remove('custom-class');
+            });
+            const newUser = new UserModel();
+            newUser.setStreamManager(subscriber);
+            newUser.setConnectionId(event.stream.connection.connectionId);
+            newUser.setType('remote');
+            const nickname = event.stream.connection.data.split('%')[0];
+            newUser.setNickname(JSON.parse(nickname).clientData);
+            subscribers.push(newUser);
+            this.setState(
+                {
+                    subscribers: subscribers,
+                },
+                () => {
+                    if (this.state.localUser) {
+                        this.sendSignalUserChanged({
+                            isAudioActive: this.state.localUser.isAudioActive(),
+                            isVideoActive: this.state.localUser.isVideoActive(),
+                            nickname: this.state.localUser.getNickname(),
+                            isScreenShareActive: this.state.localUser.isScreenShareActive(),
+                        });
+                    }
+                    this.updateLayout();
+                },
+            );
         });
     }
 
