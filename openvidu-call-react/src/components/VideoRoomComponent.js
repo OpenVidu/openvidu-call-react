@@ -213,15 +213,26 @@ class VideoRoomComponent extends Component {
     }
 
     deleteSubscriber(stream) {
-        const remoteUsers = this.state.subscribers;
-        const userStream = remoteUsers.filter((user) => user.getStreamManager().stream === stream)[0];
-        let index = remoteUsers.indexOf(userStream, 0);
-        if (index > -1) {
-            remoteUsers.splice(index, 1);
-            this.setState({
-                subscribers: remoteUsers,
-            });
-        }
+        const remoteUsers = this.state.subscribers.map(user => {
+            if (user.getStreamManager().stream === stream) {
+                return null;
+            }
+
+            return user;
+        }).filter(user => user !== null);
+
+        this.setState({
+            subscribers: remoteUsers,
+        });
+
+        // const userStream = remoteUsers.filter((user) => user.getStreamManager().stream === stream)[0];
+        // let index = remoteUsers.indexOf(userStream, 0);
+        // if (index > -1) {
+        //     remoteUsers.splice(index, 1);
+        //     this.setState({
+        //         subscribers: remoteUsers,
+        //     });
+        // }
     }
 
     subscribeToStreamCreated() {
@@ -229,7 +240,7 @@ class VideoRoomComponent extends Component {
             console.log('streamCreated event', event);
 
             const subscriber = this.state.session.subscribe(event.stream, undefined);
-            var subscribers = this.state.subscribers;
+            var subscribers = [ ...this.state.subscribers ];
             subscriber.on('streamPlaying', (e) => {
                 console.log('subscriber streamPlaying event', e);
 
