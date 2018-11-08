@@ -85,7 +85,7 @@ class VideoRoomComponent extends Component {
 
         this.OV.setAdvancedConfiguration({
             iceServers: [{
-                urls: ["stun:open-vidu-coturn-dev.dnpd.cloud:3478"]
+                urls: [ "stun:stun.l.google.com:19302" ]
             }]
         });
 
