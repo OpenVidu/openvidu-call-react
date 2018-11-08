@@ -83,12 +83,6 @@ class VideoRoomComponent extends Component {
     joinSession() {
         this.OV = new OpenVidu();
 
-        this.OV.setAdvancedConfiguration({
-            iceServers: [{
-                urls: [ "stun:stun.l.google.com:19302" ]
-            }]
-        });
-
         this.setState(
             {
                 session: this.OV.initSession(),
@@ -224,21 +218,10 @@ class VideoRoomComponent extends Component {
         this.setState({
             subscribers: remoteUsers,
         });
-
-        // const userStream = remoteUsers.filter((user) => user.getStreamManager().stream === stream)[0];
-        // let index = remoteUsers.indexOf(userStream, 0);
-        // if (index > -1) {
-        //     remoteUsers.splice(index, 1);
-        //     this.setState({
-        //         subscribers: remoteUsers,
-        //     });
-        // }
     }
 
     subscribeToStreamCreated() {
         this.state.session.on('streamCreated', (event) => {
-            console.log('streamCreated event', event);
-
             const subscriber = this.state.session.subscribe(event.stream, undefined);
             var subscribers = [ ...this.state.subscribers ];
             subscriber.on('streamPlaying', (e) => {
@@ -276,8 +259,6 @@ class VideoRoomComponent extends Component {
     subscribeToStreamDestroyed() {
         // On every Stream destroyed...
         this.state.session.on('streamDestroyed', (event) => {
-            console.log('streamDestroyed event', event);
-
             // Remove the stream from 'subscribers' array
             this.deleteSubscriber(event.stream);
             setTimeout(() => {
@@ -290,8 +271,6 @@ class VideoRoomComponent extends Component {
 
     subscribeToUserChanged() {
         this.state.session.on('signal:userChanged', (event) => {
-            console.log('signal:userChanged event', event);
-
             let remoteUsers = this.state.subscribers;
             remoteUsers.forEach((user) => {
                 if (user.getConnectionId() === event.from.connectionId) {
