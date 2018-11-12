@@ -63,21 +63,20 @@ export default class StreamComponent extends Component {
                             <InputLabel htmlFor="name-simple" id="label">
                                 Nickname
                             </InputLabel>
-                            <Input color="inherit"
+                            <Input
+                                color="inherit"
                                 id="input"
                                 value={this.state.nickname}
                                 onChange={this.handleChange}
                                 onKeyPress={this.handlePressKey}
                                 required
                             />
-                            {!this.state.isFormValid &&
-                                this.state.nickname.length <= 3 && (
-                                    <FormHelperText id="name-error-text">Nickname is too short!</FormHelperText>
-                                )}
-                            {!this.state.isFormValid &&
-                                this.state.nickname.length >= 20 && (
-                                    <FormHelperText id="name-error-text">Nickname is too long!</FormHelperText>
-                                )}
+                            {!this.state.isFormValid && this.state.nickname.length <= 3 && (
+                                <FormHelperText id="name-error-text">Nickname is too short!</FormHelperText>
+                            )}
+                            {!this.state.isFormValid && this.state.nickname.length >= 20 && (
+                                <FormHelperText id="name-error-text">Nickname is too long!</FormHelperText>
+                            )}
                         </FormControl>
                     ) : (
                         <div onClick={this.toggleNicknameForm}>
