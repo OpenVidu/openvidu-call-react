@@ -10,16 +10,22 @@ export default class OvVideoComponent extends Component {
     componentDidMount() {
         if (this.props && this.props.user.streamManager && !!this.videoRef) {
             console.log('PROPS: ', this.props);
-            this.props.user.streamManager.addVideoElement(this.videoRef.current);
+            this.props.user.getStreamManager().addVideoElement(this.videoRef.current);
         }
 
         if (this.props && this.props.user.streamManager.session && this.props.user && !!this.videoRef) {
             this.props.user.streamManager.session.on('signal:userChanged', (event) => {
                 const data = JSON.parse(event.data);
                 if (data.isScreenShareActive !== undefined) {
-                    this.props.user.streamManager.addVideoElement(this.videoRef.current);
+                    this.props.user.getStreamManager().addVideoElement(this.videoRef.current);
                 }
             });
+        }
+    }
+
+    componentDidUpdate(props) {
+        if (props && !!this.videoRef) {
+            this.props.user.getStreamManager().addVideoElement(this.videoRef.current);
         }
     }
 
