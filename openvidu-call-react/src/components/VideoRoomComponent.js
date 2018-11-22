@@ -341,10 +341,11 @@ class VideoRoomComponent extends Component {
     }
 
     screenShare() {
+        const videoSource = navigator.userAgent.indexOf('Firefox') !== -1 ? 'window' : 'screen';
         const publisher = this.OV.initPublisher(
             undefined,
             {
-                videoSource: 'screen',
+                videoSource: videoSource,
                 publishAudio: localUser.isAudioActive(),
                 publishVideo: localUser.isVideoActive(),
                 mirror: false,
