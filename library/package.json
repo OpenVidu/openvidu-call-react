@@ -1,39 +1,39 @@
 {
-  "name": "openvidu-react",
-  "author": "OpenVidu",
-  "description": "OpenVidu React",
-  "license": "Apache-2.0",
-  "version": "2.6.0",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/OpenVidu/openvidu-call-react"
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "dependencies": {
-    "@material-ui/core": "3.5.1",
-    "@material-ui/icons": "3.0.1",
-    "axios": "0.18.0",
-    "jquery": "3.3.1",
-    "openvidu-browser": "2.6.0",
-    "typeface-roboto": "0.0.54"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "create-library": "npm run build && npm pack"
-  },
-  "devDependencies": {
-    "@babel/cli": "7.1.2",
-    "@babel/core": "7.1.2",
-    "react": "16.6.3",
-    "react-dom": "16.6.3",
-    "react-scripts": "2.1.1"
-  }
+    "author": "OpenVidu",
+    "dependencies": {
+        "@material-ui/core": "3.5.1",
+        "@material-ui/icons": "3.0.1",
+        "axios": "0.18.0",
+        "jquery": "3.3.1",
+        "openvidu-browser": "2.7.0",
+        "typeface-roboto": "0.0.54"
+    },
+    "description": "OpenVidu React",
+    "devDependencies": {
+        "@babel/cli": "7.1.2",
+        "@babel/core": "7.1.2",
+        "react": "16.6.3",
+        "react-dom": "16.6.3",
+        "react-scripts": "2.1.1"
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "license": "Apache-2.0",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "name": "openvidu-react",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/OpenVidu/openvidu-call-react"
+    },
+    "scripts": {
+        "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+        "create-library": "npm run build && npm pack",
+        "eject": "react-scripts eject",
+        "start": "react-scripts start",
+        "test": "react-scripts test --env=jsdom"
+    },
+    "version": "2.7.0"
 }
