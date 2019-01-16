@@ -6,14 +6,14 @@
         "not op_mini all"
     ],
     "dependencies": {
-        "@material-ui/core": "3.6.2",
-        "@material-ui/icons": "3.0.1",
+        "@material-ui/core": "3.9.0",
+        "@material-ui/icons": "3.0.2",
         "axios": "0.18.0",
         "jquery": "3.3.1",
         "openvidu-browser": "2.7.0",
-        "react": "16.6.3",
-        "react-dom": "16.6.3",
-        "react-scripts": "2.1.1"
+        "react": "16.7.0",
+        "react-dom": "16.7.0",
+        "react-scripts": "1.1.5"
     },
     "name": "openvidu-call-react",
     "private": true,
@@ -24,5 +24,5 @@
         "start": "react-scripts start",
         "test": "react-scripts test --env=jsdom"
     },
-    "version": "2.7.1"
+    "version": "2.7.2"
 }
