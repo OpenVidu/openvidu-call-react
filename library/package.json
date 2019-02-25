@@ -11,8 +11,8 @@
     "description": "OpenVidu React",
     "devDependencies": {
         "babel-cli": "6.26.0",
-        "react": "16.7.0",
-        "react-dom": "16.7.0",
+        "react": "16.8.3",
+        "react-dom": "16.8.3",
         "react-scripts": "1.1.5"
     },
     "files": [
