@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import HighlightOff from '@material-ui/icons/HighlightOff';
 import Send from '@material-ui/icons/Send';
 
@@ -121,9 +121,9 @@ export default class ChatComponent extends Component {
                             onKeyPress={this.handlePressKey}
                         />
                         <Tooltip title="Send message">
-                            <Button variant="fab" mini id="sendButton" onClick={this.sendMessage}>
+                            <Fab size="small" id="sendButton" onClick={this.sendMessage}>
                                 <Send />
-                            </Button>
+                            </Fab>
                         </Tooltip>
                     </div>
                 </div>
