@@ -30,6 +30,7 @@ class VideoRoomComponent extends Component {
             localUser: undefined,
             subscribers: [],
             chatDisplay: 'none',
+            isWorker: Math.floor(Math.random() * 100)%2===0 //temporary
         };
 
         this.joinSession = this.joinSession.bind(this);
@@ -137,17 +138,19 @@ class VideoRoomComponent extends Component {
             videoSource: undefined,
             publishAudio: localUser.isAudioActive(),
             publishVideo: localUser.isVideoActive(),
-            resolution: '640x480',
+            resolution: '1280x720',
             frameRate: 30,
-            insertMode: 'APPEND',
+            insertMode: 'REPLACE',
         });
 
         if (this.state.session.capabilities.publish) {
-            this.state.session.publish(publisher).then(() => {
-                if (this.props.joinSession) {
-                    this.props.joinSession();
-                }
-            });
+            if(this.state.isWorker){
+                this.state.session.publish(publisher).then(() => {
+                    if (this.props.joinSession) {
+                        this.props.joinSession();
+                    }
+                });
+            }
         }
         localUser.setNickname(this.state.myUserName);
         localUser.setConnectionId(this.state.session.connection.connectionId);
@@ -445,27 +448,10 @@ class VideoRoomComponent extends Component {
 
         return (
             <div className="container" id="container">
-                <ToolbarComponent
-                    sessionId={mySessionId}
-                    user={localUser}
-                    showNotification={this.state.messageReceived}
-                    camStatusChanged={this.camStatusChanged}
-                    micStatusChanged={this.micStatusChanged}
-                    screenShare={this.screenShare}
-                    stopScreenShare={this.stopScreenShare}
-                    toggleFullscreen={this.toggleFullscreen}
-                    leaveSession={this.leaveSession}
-                    toggleChat={this.toggleChat}
-                />
 
                 <DialogExtensionComponent showDialog={this.state.showExtensionDialog} cancelClicked={this.closeDialogExtension} />
 
                 <div id="layout" className="bounds">
-                    {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-                        <div className="OT_root OT_publisher custom-class" id="localUser">
-                            <StreamComponent user={localUser} handleNickname={this.nicknameChanged} />
-                        </div>
-                    )}
                     {this.state.subscribers.map((sub, i) => (
                         <div key={i} className="OT_root OT_publisher custom-class" id="remoteUsers">
                             <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} />
@@ -482,6 +468,11 @@ class VideoRoomComponent extends Component {
                         </div>
                     )}
                 </div>
+                <ToolbarComponent
+                  showNotification={this.state.messageReceived}
+                  leaveSession={this.leaveSession}
+                  toggleChat={this.toggleChat}
+                />
             </div>
         );
     }
