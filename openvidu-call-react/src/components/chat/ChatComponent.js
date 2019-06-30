@@ -33,7 +33,7 @@ export default class ChatComponent extends Component {
                 const userImg = document.getElementById('userImg-' + (this.state.messageList.length - 1));
                 const video = document.getElementById('video-' + data.streamId);
                 const avatar = userImg.getContext('2d');
-                avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
+                // avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
                 this.props.messageReceived();
             }, 50);
             this.setState({ messageList: messageList });

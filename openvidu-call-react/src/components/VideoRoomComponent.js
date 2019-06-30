@@ -3,7 +3,6 @@ import axios from 'axios';
 import './VideoRoomComponent.css';
 import {OpenVidu} from 'openvidu-browser';
 import StreamComponent from './stream/StreamComponent';
-import DialogExtensionComponent from './dialog-extension/DialogExtension';
 import ChatComponent from './chat/ChatComponent';
 
 import OpenViduLayout from '../layout/openvidu-layout';
@@ -15,6 +14,9 @@ var localUser = new UserModel();
 class VideoRoomComponent extends Component {
   constructor(props) {
     super(props);
+    if(!this.props.isLoggedIn){
+      this.props.history.push('/login')
+    }
     this.OPENVIDU_SERVER_URL = this.props.openviduServerUrl
       ? this.props.openviduServerUrl
       : 'https://' + window.location.hostname + ':4443';
@@ -30,7 +32,6 @@ class VideoRoomComponent extends Component {
       localUser: undefined,
       subscribers: [],
       chatDisplay: 'none',
-      // isWorker: Math.floor(Math.random() * 100)%2===0 //temporary
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -41,9 +42,6 @@ class VideoRoomComponent extends Component {
     this.micStatusChanged = this.micStatusChanged.bind(this);
     this.nicknameChanged = this.nicknameChanged.bind(this);
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
-    this.screenShare = this.screenShare.bind(this);
-    this.stopScreenShare = this.stopScreenShare.bind(this);
-    this.closeDialogExtension = this.closeDialogExtension.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
     this.checkSize = this.checkSize.bind(this);
@@ -133,15 +131,26 @@ class VideoRoomComponent extends Component {
   }
 
   connectWebCam() {
-    let publisher = this.OV.initPublisher(undefined, {
-      audioSource: false,
-      videoSource: undefined,
-      publishAudio: false,
-      publishVideo: localUser.isVideoActive(),
-      resolution: '1280x720',
-      frameRate: 30,
-      insertMode: 'REPLACE',
-    });
+    let publisher;
+    if (this.props.isWorker) {
+      publisher = this.OV.initPublisher(undefined, {
+        audioSource: false,
+        videoSource: undefined,
+        publishAudio: false,
+        publishVideo: localUser.isVideoActive(),
+        resolution: '1280x720',
+        frameRate: 30,
+        insertMode: 'REPLACE',
+      });
+    } else {
+      publisher = this.OV.initPublisher(undefined, {
+        audioSource: false,
+        videoSource: false,
+        publishAudio: false,
+        publishVideo: false
+      });
+    }
+
 
     if (this.state.session.capabilities.publish) {
       if (this.props.isWorker) {
@@ -154,7 +163,6 @@ class VideoRoomComponent extends Component {
     }
     localUser.setNickname(this.state.myUserName);
     localUser.setConnectionId(this.state.session.connection.connectionId);
-    localUser.setScreenShareActive(false);
     localUser.setStreamManager(publisher);
     this.subscribeToUserChanged();
     this.subscribeToStreamDestroyed();
@@ -187,6 +195,7 @@ class VideoRoomComponent extends Component {
     if (this.props.leaveSession) {
       this.props.leaveSession();
     }
+    this.props.history.push('/login')
   }
 
   camStatusChanged() {
@@ -225,9 +234,8 @@ class VideoRoomComponent extends Component {
   subscribeToStreamCreated() {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
-      var subscribers = this.state.subscribers;
+      let subscribers = this.state.subscribers;
       subscriber.on('streamPlaying', (e) => {
-        this.checkSomeoneShareScreen();
         subscriber.videos[0].video.parentElement.classList.remove('custom-class');
       });
       const newUser = new UserModel();
@@ -247,7 +255,6 @@ class VideoRoomComponent extends Component {
               isAudioActive: this.state.localUser.isAudioActive(),
               isVideoActive: this.state.localUser.isVideoActive(),
               nickname: this.state.localUser.getNickname(),
-              isScreenShareActive: this.state.localUser.isScreenShareActive(),
             });
           }
           this.updateLayout();
@@ -261,9 +268,6 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamDestroyed', (event) => {
       // Remove the stream from 'subscribers' array
       this.deleteSubscriber(event.stream);
-      setTimeout(() => {
-        this.checkSomeoneShareScreen();
-      }, 20);
       event.preventDefault();
       this.updateLayout();
     });
@@ -285,16 +289,12 @@ class VideoRoomComponent extends Component {
           if (data.nickname !== undefined) {
             user.setNickname(data.nickname);
           }
-          if (data.isScreenShareActive !== undefined) {
-            user.setScreenShareActive(data.isScreenShareActive);
-          }
         }
       });
       this.setState(
         {
           subscribers: remoteUsers,
-        },
-        () => this.checkSomeoneShareScreen(),
+        }
       );
     });
   }
@@ -344,73 +344,8 @@ class VideoRoomComponent extends Component {
     }
   }
 
-  screenShare() {
-    const videoSource = navigator.userAgent.indexOf('Firefox') !== -1 ? 'window' : 'screen';
-    const publisher = this.OV.initPublisher(
-      undefined,
-      {
-        videoSource: videoSource,
-        publishAudio: localUser.isAudioActive(),
-        publishVideo: localUser.isVideoActive(),
-        mirror: false,
-      },
-      (error) => {
-        if (error && error.name === 'SCREEN_EXTENSION_NOT_INSTALLED') {
-          this.setState({showExtensionDialog: true});
-        } else if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
-          alert('Your browser does not support screen sharing');
-        } else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
-          alert('You need to enable screen sharing extension');
-        } else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
-          alert('You need to choose a window or application to share');
-        }
-      },
-    );
 
-    publisher.once('accessAllowed', () => {
-      this.state.session.unpublish(localUser.getStreamManager());
-      localUser.setStreamManager(publisher);
-      this.state.session.publish(localUser.getStreamManager()).then(() => {
-        localUser.setScreenShareActive(true);
-        this.setState({localUser: localUser}, () => {
-          this.sendSignalUserChanged({isScreenShareActive: localUser.isScreenShareActive()});
-        });
-      });
-    });
-    publisher.on('streamPlaying', () => {
-      this.updateLayout();
-      publisher.videos[0].video.parentElement.classList.remove('custom-class');
-    });
-  }
 
-  closeDialogExtension() {
-    this.setState({showExtensionDialog: false});
-  }
-
-  stopScreenShare() {
-    this.state.session.unpublish(localUser.getStreamManager());
-    this.connectWebCam();
-  }
-
-  checkSomeoneShareScreen() {
-    let isScreenShared;
-    // return true if at least one passes the test
-    isScreenShared = this.state.subscribers.some((user) => user.isScreenShareActive()) || localUser.isScreenShareActive();
-    const openviduLayoutOptions = {
-      maxRatio: 3 / 2,
-      minRatio: 9 / 16,
-      fixedRatio: isScreenShared,
-      bigClass: 'OV_big',
-      bigPercentage: 0.8,
-      bigFixedRatio: false,
-      bigMaxRatio: 3 / 2,
-      bigMinRatio: 9 / 16,
-      bigFirst: true,
-      animate: true,
-    };
-    this.layout.setLayoutOptions(openviduLayoutOptions);
-    this.updateLayout();
-  }
 
   toggleChat(property) {
     let display = property;
@@ -444,15 +379,12 @@ class VideoRoomComponent extends Component {
   }
 
   render() {
-    const mySessionId = this.state.mySessionId;
     const localUser = this.state.localUser;
     var chatDisplay = {display: this.state.chatDisplay};
 
     return (
       <div className="container" id="container">
 
-        <DialogExtensionComponent showDialog={this.state.showExtensionDialog}
-                                  cancelClicked={this.closeDialogExtension}/>
 
         <div id="layout" className="bounds">
           {this.state.subscribers.map((sub, i) => (
@@ -498,7 +430,7 @@ class VideoRoomComponent extends Component {
 
   createSession(sessionId) {
     return new Promise((resolve, reject) => {
-      var data = JSON.stringify({customSessionId: sessionId});
+      let data = JSON.stringify({customSessionId: sessionId});
       axios
         .post(this.OPENVIDU_SERVER_URL + '/api/sessions', data, {
           headers: {
@@ -511,7 +443,7 @@ class VideoRoomComponent extends Component {
           resolve(response.data.id);
         })
         .catch((response) => {
-          var error = Object.assign({}, response);
+          let error = Object.assign({}, response);
           if (error.response && error.response.status === 409) {
             resolve(sessionId);
           } else {
@@ -538,7 +470,7 @@ class VideoRoomComponent extends Component {
 
   createToken(sessionId) {
     return new Promise((resolve, reject) => {
-      var data = JSON.stringify({session: sessionId});
+      let data = JSON.stringify({session: sessionId});
       axios
         .post(this.OPENVIDU_SERVER_URL + '/api/tokens', data, {
           headers: {

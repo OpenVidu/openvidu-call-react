@@ -14,7 +14,8 @@ class Main extends Component {
 
   setWorker = (val) => {
     this.setState({
-      isWorker: val
+      isWorker: val,
+      isLoggedIn: true
     })
   }
 
@@ -24,15 +25,35 @@ class Main extends Component {
         <div>
           <Route
             path='/'
-            render={(props) => <Login {...props} setWorker={this.setWorker}/>}
+            exact
+            render={
+              (props) =>
+                <Login
+                  {...props}
+                  setWorker={this.setWorker}
+                />
+            }
           />
           <Route
             path='/login'
-            render={(props) => <Login {...props} setWorker={this.setWorker}/>}
+            render={
+              (props) =>
+                <Login
+                  {...props}
+                  setWorker={this.setWorker}
+                />
+            }
           />
           <Route
             path='/room'
-            render={(props) => <VideoRoomComponent {...props} isWorker={this.state.isWorker}/>}
+            render={
+              (props) =>
+                <VideoRoomComponent
+                  {...props}
+                  isWorker={this.state.isWorker}
+                  isLoggedIn={this.state.isLoggedIn}
+                />
+            }
           />
         </div>
       </Router>
