@@ -5,7 +5,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
 
-import IconButton from '@material-ui/core/IconButton';
 
 export default class ToolbarComponent extends Component {
     constructor(props) {
@@ -28,13 +27,28 @@ export default class ToolbarComponent extends Component {
         return (
           <div className="toolbar">
               <div className="top-flex">
-                  <button className="navButton" onClick={this.leaveSession}>
+                  <button className="navButton icon" onClick={this.leaveSession}>
                       <PowerSettingsNew />
                   </button>
               </div>
               <div className="bottom-flex">
-                  <button onClick={this.toggleChat}>
-                      {this.props.showNotification && <div id="point" className="" />}
+                  <img
+                    src="/harry.jpg"
+                    className='icon item-bottom'
+                  />
+                  <img
+                    src="/hermo.jpg"
+                    className='icon item-bottom'
+                  />
+                  <img
+                    src="/ron.jpeg"
+                    className='icon item-bottom'
+                  />
+                  <button
+                    onClick={this.toggleChat}
+                    className='icon item-bottom'
+                  >
+                      {this.props.showNotification && <div id="point" />}
                       <Tooltip title="Chat">
                           <QuestionAnswer />
                       </Tooltip>

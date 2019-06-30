@@ -18,3 +18,19 @@
   border: 1px solid #000;
   z-index: 99999;
 }
+
+.icon{
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.bottom-flex{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.item-bottom{
+  margin-bottom: 20px;
+}
