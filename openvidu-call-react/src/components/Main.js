@@ -20,7 +20,6 @@ class Main extends Component {
   render() {
     return (
       <Router>
-        <div>
           <Route
             path='/'
             exact
@@ -64,7 +63,6 @@ class Main extends Component {
                 />
             }
           />
-        </div>
       </Router>
     )
   }
