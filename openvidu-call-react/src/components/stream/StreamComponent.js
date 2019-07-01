@@ -102,13 +102,6 @@ export default class StreamComponent extends Component {
                                 </div>
                             ) : null}
                         </div>
-                        <div>
-                            {!this.props.user.isLocal() && (
-                                <IconButton id="volumeButton" onClick={this.toggleSound}>
-                                    {this.state.mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
-                                </IconButton>
-                            )}
-                        </div>
                     </div>
                 ) : null}
             </div>

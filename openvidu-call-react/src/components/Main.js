@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {BrowserRouter as Router, Route} from "react-router-dom";
-import Login from "./Login";
-import VideoRoomComponent from './VideoRoomComponent'
+import Login from "./login/Login";
+import VideoRoomComponent from './VideoRoom/VideoRoomComponent'
 
 class Main extends Component {
   constructor(props) {

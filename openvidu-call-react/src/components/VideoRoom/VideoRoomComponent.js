@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import axios from 'axios';
+import axios from 'axios/index';
 import './VideoRoomComponent.css';
 import {OpenVidu} from 'openvidu-browser';
-import StreamComponent from './stream/StreamComponent';
-import ChatComponent from './chat/ChatComponent';
+import StreamComponent from '../stream/StreamComponent';
+import ChatComponent from '../chat/ChatComponent';
 
-import OpenViduLayout from '../layout/openvidu-layout';
-import UserModel from '../models/user-model';
-import ToolbarComponent from './toolbar/ToolbarComponent';
+import OpenViduLayout from '../../layout/openvidu-layout';
+import UserModel from '../../models/user-model';
+import ToolbarComponent from '../toolbar/ToolbarComponent';
 
 var localUser = new UserModel();
 
