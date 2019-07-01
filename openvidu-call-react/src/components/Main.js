@@ -8,13 +8,11 @@ class Main extends Component {
     super(props);
     this.state = {
       isLoggedIn: false,
-      isWorker: false
     }
   }
 
   setWorker = (val) => {
     this.setState({
-      isWorker: val,
       isLoggedIn: true
     })
   }
@@ -50,7 +48,18 @@ class Main extends Component {
               (props) =>
                 <VideoRoomComponent
                   {...props}
-                  isWorker={this.state.isWorker}
+                  isWorker={false}
+                  isLoggedIn={this.state.isLoggedIn}
+                />
+            }
+          />
+          <Route
+            path='/worker'
+            render={
+              (props) =>
+                <VideoRoomComponent
+                  {...props}
+                  isWorker={true}
                   isLoggedIn={this.state.isLoggedIn}
                 />
             }

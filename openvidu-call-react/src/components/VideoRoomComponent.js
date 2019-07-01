@@ -15,7 +15,10 @@ class VideoRoomComponent extends Component {
   constructor(props) {
     super(props);
     if(!this.props.isLoggedIn){
-      this.props.history.push('/login')
+      //no login for worker for now
+      if(!this.props.isWorker){
+        this.props.history.push('/login')
+      }
     }
     this.OPENVIDU_SERVER_URL = this.props.openviduServerUrl
       ? this.props.openviduServerUrl

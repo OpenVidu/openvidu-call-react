@@ -20,9 +20,7 @@ class Login extends Component {
   render() {
     return (
       <div>
-        <label>Are you a worker?</label>
-        <input type="checkbox" value="Is worker" name="isWorker" onChange={this.handleChangeWorker}/>
-        <div><button onClick={this.handleSubmit}>Login</button></div>
+        <button onClick={this.handleSubmit}>Login</button>
       </div>
     );
   }
