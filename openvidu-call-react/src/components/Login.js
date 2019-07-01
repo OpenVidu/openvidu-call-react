@@ -5,7 +5,11 @@ import logo from './images/logo.svg'
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = { isWorker: '' };
+    this.state = {
+      isWorker: '',
+      email: 'oreo@apeunit.com',
+      password: 'password123'
+    };
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -42,9 +46,9 @@ class Login extends Component {
             <div className='user'>
               <h4>Loggen Sie mit lhrem <span className='blue-font'>B&O Account</span> ein</h4>
               <form>
-                <input type="email" name="email" placeholder="E-mail Address" onBlur={this.handleChangeWorker}/>
+                <input type="email" name="email" placeholder="E-mail Address" value={this.state.email}/>
 
-                <input type="password" name="password" placeholder="Password" />
+                <input type="password" name="password" placeholder="Password" value={this.state.password} />
 
                 <input type="submit" value="Abnahme Beitreten" onClick={this.handleSubmit}/>
               </form>
