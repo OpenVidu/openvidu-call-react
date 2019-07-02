@@ -4,7 +4,7 @@
     width: 100%;
     height: 100%;
   }
-  
+
   #chatToolbar {
     height: 30px;
     background-color: #3d3d3d;
@@ -17,13 +17,13 @@
     border-top-right-radius: 6px;
     color: #ffffff;
   }
-  
+
   #closeButton {
     position: absolute;
     right: 0;
     top: -8px;
   }
-  
+
   #chatComponent {
     background-color: #b8b8b8;
     position: absolute;
@@ -37,13 +37,13 @@
     width: calc(100% - 30px);
     border-radius: 20px;
   }
-  
+
   .message-wrap {
     padding: 0 15px;
     height: calc(100% - 80px);
     overflow: auto;
   }
-  
+
   .message {
     position: relative;
     padding: 7px 0;
@@ -55,23 +55,23 @@
     height: 60px;
     top: 15px;
   }
-  
+
   .msg-detail {
     width: calc(100% - 65px);
     display: inline-block;
   }
-  
+
   .msg-detail p {
     margin: 0;
     font-size: 15px;
   }
-  
+
   .msg-info p {
     font-size: 0.8em;
     color: #000000;
     font-style: italic;
   }
-  
+
   .msg-content {
     position: relative;
     margin-top: 5px;
@@ -81,7 +81,7 @@
     width: auto;
     max-width: 80%;
   }
-  
+
   span.triangle {
     border-radius: 2px;
     height: 8px;
@@ -92,26 +92,26 @@
     transform: rotate(45deg);
     position: absolute;
   }
-  
+
   .text {
     word-break: break-all;color: #000000;
   }
-  
+
   /* Start message from other user */
-  
+
   .message > .left .msg-detail .msg-info {
     text-align: left;
   }
-  
+
   .message.left .msg-detail {
     padding-left: 65px;
   }
-  
+
   .message.left .user-img {
     left: -5px;
     border: 1px solid #f0f0f094;
   }
-  
+
   .message.left .msg-detail .msg-content {
     background-color: #f0f0f0;
     float: left;
@@ -122,11 +122,11 @@
     border-left-width: 0;
     left: -5px;
   }
-  
+
   /* End message from other user */
-  
+
   /* Start my messages */
-  
+
   .message.right .msg-detail .msg-info {
     text-align: right;
   }
@@ -134,7 +134,7 @@
     right: -5px;
     border: 1px solid #c8ffe8ab;
   }
-  
+
   .message.right .msg-detail .msg-content {
     background-color: #c8ffe8;
     float: right;
@@ -145,9 +145,9 @@
     border-left-width: 0;
     right: -5px;
   }
-  
+
   /* End my messages */
-  
+
   #messageInput {
     position: absolute;
     bottom: 0px;
@@ -165,10 +165,10 @@
     border: none;
     outline: none;
     font-size: 14px;
-    margin-left: -6%;
+    margin-left: 2%;
     color: #000000;
   }
-  
+
   #sendButton {
     background-color: #81e9b0;
     position: absolute;
@@ -183,16 +183,15 @@
     margin-left: 3px !important;
     margin-bottom: 2px !important;
   }
-  
+
   ::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background-color: #6b6b6b;
   }
-  
+
   .chatComponentLight ::-webkit-scrollbar-thumb {
     background-color: #eeeeee !important;
   }
-  
