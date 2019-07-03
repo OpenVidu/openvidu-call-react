@@ -1,13 +1,7 @@
-[![License badge](https://img.shields.io/badge/license-Apache2-orange.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Documentation badge](https://readthedocs.org/projects/fiware-orion/badge/?version=latest)](http://openvidu.io/docs/home/)
-[![Docker badge](https://img.shields.io/docker/pulls/fiware/orion.svg)](https://hub.docker.com/r/openvidu/classroom-demo/)
-[![Support badge](https://img.shields.io/badge/support-sof-yellowgreen.svg)](https://groups.google.com/forum/#!forum/openvidu)
+1. Before running the app, openvidu server needs to be run:
+`docker run  -p 4443:4443 --rm -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.10.0`
 
-[![][OpenViduLogo]](http://openvidu.io)
-
-openvidu-call-react
-===
-
-Visit [openvidu.io/demos](http://openvidu.io/demos#3)
-
-[OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
+2. Clone the app from `https://github.com/ror-shubham/openvidu-call-react.git`
+3. `cd` into `openvidu-call-react`
+4. `npm i`
+5. `npm run start` 
