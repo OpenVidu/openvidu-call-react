@@ -65,7 +65,7 @@ export class CheckList extends Component{
   }
   submitChange = () => {
     this.updateItem(this.state.editItemKey, {description: this.state.editable});
-    this.state.isEditing=false;
+    this.closeEdit();
   }
   handleChangeEdit = (event) => {
     this.setState({
@@ -73,7 +73,7 @@ export class CheckList extends Component{
     })
   }
   toggleShrink = () => {
-    if(!this.state.editable){
+    if(!this.state.isEditing){
       this.setState({
         isShrinked: !this.state.isShrinked
       })
@@ -92,18 +92,17 @@ export class CheckList extends Component{
               float: 'right',
               cursor: 'pointer'
             }}
+            onClick={this.toggleShrink}
           >
             { this.state.isShrinked ?
               <img
                 src="/more.png"
                 alt="more"
-                onClick={this.toggleShrink}
               />
               :
               <img
                 src="/less.png"
                 alt="less"
-                onClick={this.toggleShrink}
               />
             }
 
@@ -131,7 +130,6 @@ export class CheckList extends Component{
       </div>
       { this.state.isEditing ?
         <div
-          item
           className="edit-box"
         >
           <div>
