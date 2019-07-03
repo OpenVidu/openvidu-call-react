@@ -3,7 +3,7 @@
   right: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   height: 100%;
 }
 
@@ -23,14 +23,9 @@
   height: 40px;
   width: 40px;
   border-radius: 50%;
-}
-
-.bottom-flex{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.item-bottom{
+  border: 2px solid rgba(80,227,194,0.75);
   margin-bottom: 20px;
 }
+
+
+

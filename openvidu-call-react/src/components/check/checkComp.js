@@ -21,10 +21,12 @@ export class CheckComp extends Component {
           lg={{ span: 24, offset: 0 }}
           xl={{ span: 24, offset: 0 }}
         >
-          <h4>{this.props.protocol.title}</h4>
-          <h6>
+          <div className="check-comp-title">
+            {this.props.protocol.title}
+          </div>
+          <div className="check-comp-description">
             {this.props.protocol.description}
-          </h6>
+          </div>
           <div className="act-btn-ey">
           <span>
             {/* <Col
@@ -35,8 +37,13 @@ export class CheckComp extends Component {
           lg={{ span: 3, offset: 0 }}
           xl={{ span: 3, offset: 0 }}
         >    */}
-            <Fab color="primary" aria-label="Add" style={{
-              marginRight : "1rem"}}>
+            <Fab
+              color="primary"
+              aria-label="Add"
+              style={{
+                marginRight : "1rem"}}
+              size="small"
+            >
               <CloseIcon />
              </Fab>
             {/* </Col>
@@ -47,7 +54,11 @@ export class CheckComp extends Component {
           lg={{ span: 3, offset: 0 }}
           xl={{ span: 3, offset: 0 }}
         >    */}
-            <Fab color="primary" aria-label="Add">
+            <Fab
+              color="primary"
+              aria-label="Add"
+              size="small"
+            >
               <CheckIcon />
              </Fab>
             {/* </Col> */}

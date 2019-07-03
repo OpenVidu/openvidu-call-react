@@ -26,34 +26,27 @@ export default class ToolbarComponent extends Component {
         const localUser = this.props.user;
         return (
           <div className="toolbar">
-              <div className="top-flex">
-                  <button className="navButton icon" onClick={this.leaveSession}>
-                      <PowerSettingsNew />
-                  </button>
-              </div>
-              <div className="bottom-flex">
-                  <img
-                    src="/harry.jpg"
-                    className='icon item-bottom'
-                  />
-                  <img
-                    src="/hermo.jpg"
-                    className='icon item-bottom'
-                  />
-                  <img
-                    src="/ron.jpeg"
-                    className='icon item-bottom'
-                  />
-                  <button
-                    onClick={this.toggleChat}
-                    className='icon item-bottom'
-                  >
-                      {this.props.showNotification && <div id="point" />}
-                      <Tooltip title="Chat">
-                          <QuestionAnswer />
-                      </Tooltip>
-                  </button>
-              </div>
+              <img
+                src="/harry.jpg"
+                className='icon'
+              />
+              <img
+                src="/hermo.jpg"
+                className='icon'
+              />
+              <img
+                src="/ron.jpeg"
+                className='icon'
+              />
+              <button
+                onClick={this.toggleChat}
+                className='icon'
+              >
+                  {this.props.showNotification && <div id="point" />}
+                  <Tooltip title="Chat">
+                      <QuestionAnswer />
+                  </Tooltip>
+              </button>
           </div>
         );
     }

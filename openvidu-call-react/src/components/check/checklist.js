@@ -2,7 +2,6 @@ import {Button, Col, Icon} from "antd";
 import {CheckComp} from "./checkComp";
 import React, {Component} from "react";
 import CloseIcon from '@material-ui/icons/Close';
-import ShrinkIcon from '@material-ui/icons/TransitEnterexit';
 
 import InputBase from '@material-ui/core/InputBase';
 
@@ -40,6 +39,14 @@ export class CheckList extends Component{
       isShrinked: false
     }
   }
+
+  componentDidMount() {
+    this.props.user.getStreamManager().stream.session.on('signal:change-protocol', (event) => {
+      const data = JSON.parse(event.data);
+      this.setState({ protocols: data });
+    });
+  }
+
   onEdit = (index) => {
     this.setState({
       isEditing: true,
@@ -63,8 +70,12 @@ export class CheckList extends Component{
       ]
     });
   }
-  submitChange = () => {
-    this.updateItem(this.state.editItemKey, {description: this.state.editable});
+  submitChange = async () => {
+    await this.updateItem(this.state.editItemKey, {description: this.state.editable});
+    this.props.user.getStreamManager().stream.session.signal({
+      data: JSON.stringify(this.state.protocols),
+      type: 'change-protocol',
+    });
     this.closeEdit();
   }
   handleChangeEdit = (event) => {
@@ -86,7 +97,10 @@ export class CheckList extends Component{
       <div
         className="check-box"
       >
-        <h2>Abnahmeprotokoll Schimmelschaden
+        <div className="title-container">
+          <div className="title-check-box">
+            Abnahmeprotokoll Schimmelschaden
+          </div>
           <span
             style={{
               float: 'right',
@@ -105,15 +119,13 @@ export class CheckList extends Component{
                 alt="less"
               />
             }
-
-
           </span>
-        </h2>
-        <h4>
+        </div>
+        <div className="address">
           Postillonstraße 17
           <br />
           80637 München
-        </h4>
+        </div>
         { this.state.isShrinked ? null :
           <div
             style={{
@@ -147,7 +159,7 @@ export class CheckList extends Component{
               </span>
             </div>
             <Rule/>
-            <div className="edit-box-heading">
+            <div className="edit-box-title">
               {this.state.protocols[this.state.editItemKey].title}
             </div>
             <div className="edit-container">

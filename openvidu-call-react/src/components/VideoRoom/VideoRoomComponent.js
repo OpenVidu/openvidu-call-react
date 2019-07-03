@@ -355,8 +355,9 @@ class VideoRoomComponent extends Component {
 
     return (
       <div className="container" id="container">
-
-        <CheckList/>
+        {localUser !== undefined && localUser.getStreamManager() !== undefined &&(
+          <CheckList user={localUser}/>
+        )}
 
         <div id="layout" className="bounds">
           {this.state.subscribers.map((sub, i) => (

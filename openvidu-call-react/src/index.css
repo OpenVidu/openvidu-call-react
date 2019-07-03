@@ -1,3 +1,17 @@
+@font-face {
+  font-family: GT America;
+  src: url("/Fonts/GT America/GT America Extended Regular.otf");
+}
+@font-face {
+  font-family: GT America;
+  font-weight: bold;
+  src: url("/Fonts/GT America/GT America Extended Bold.otf");
+}
+@font-face {
+  font-family: GT America;
+  font-weight: 500;
+  src: url("/Fonts/GT America/GT-America-Extended-Medium.OTF");
+}
 html{
   height: 100%;
   margin: 0;
@@ -6,7 +20,7 @@ html{
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'GT America', serif;
   height: 100%;
   width: 100%;
 }
