@@ -1,0 +1,130 @@
+.login{
+    background: #F0F5F9;
+    margin: 0 10% 0 10%;
+    display: flex;
+    flex-direction: column;
+}
+
+.login .head{
+    display: flex;
+    width: 100%;
+    padding: 16% 0 9% 0;
+}
+
+.login .foot{
+    width: 100%;
+    padding-bottom: 9%;
+}
+
+.details, .login-box{
+    display: flex;
+    align-items: center;
+}
+
+.details{
+    padding: 0 0 0 10%;
+    width: 60%;
+}
+
+.login-box {
+    padding: 0 8% 0 3%;
+    width:40%;
+}
+
+.details .title{
+    font-family: "GT America";
+    font-size: 38px;
+    line-height: 49px;
+}
+
+.info {
+    font-family: "GT America";	font-size: 18px;	line-height: 25px;
+    padding-top: 17px;
+}
+
+.padding-top-10{
+    padding-right: 8%;
+    text-align: right;
+    color: #000000;	font-family: "GT America";	font-size: 12px;	line-height: 14px;
+}
+
+
+.logo {
+    width: 10px;
+    height: 10px;
+}
+
+.user{
+    width: 100%;
+    background: white;
+    border-radius: 7px;
+    box-shadow: 0 0 20px 0 rgba(0,8,78,0.11);
+}
+
+.blue-font{
+    color: #0014C4;
+}
+
+input{
+    width: 85%;
+    padding: 3px 7px;
+    display: block;
+    margin : 8px auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input[type=submit] {
+    width: 100%;
+    background-color: #0014C4;
+    color: rgb(255, 255, 255, 0.56) ;
+    padding: 14px 20px;
+    border: none;
+    border-radius:0 0 7px 7px;
+    cursor: pointer;
+    margin: 35px 0 0 0;
+    font-family: "GT America";	font-size: 13px;	font-weight: 500;	line-height: 16px;
+  }
+  
+  input[type=submit]:hover {
+    background-color: #2818d8;
+  }
+
+  h4 {
+    padding: 0 21px;
+    font-family: "GT America";	font-size: 20px;	line-height: 25px;
+    padding-top: 21px;
+  }
+
+
+
+@media only screen and (max-width: 768px) {
+
+    .login{
+        flex-direction: column;
+        margin: 0;
+        height: auto;
+    }
+
+    .login .head{
+        flex-direction: column;
+    }
+
+    .small-screen-login{
+        padding: 0 5%;
+    }
+
+    .details, .login-box{
+        width: 100%;
+        text-align: center;
+        padding: 0;
+        justify-content: center;
+        padding: 10% 0 2% 0;
+    }
+
+    .user{
+        width: auto;
+    }
+
+}
