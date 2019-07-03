@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 
 import Fab from '@material-ui/core/Fab';
+import IconButton from '@material-ui/core/IconButton';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
-import Badge from '@material-ui/core/Badge';
+import EditIcon from '@material-ui/icons/Edit';
+import './checkComp.css';
 
 import { Row, Col, Button, Icon } from "antd";
 
@@ -19,11 +21,9 @@ export class CheckComp extends Component {
           lg={{ span: 24, offset: 0 }}
           xl={{ span: 24, offset: 0 }}
         >
-          <h4>Sichtbarer Schimmel</h4>
+          <h4>{this.props.protocol.title}</h4>
           <h6>
-            Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum
-            nibh, ut fermentum massa justo sit amet risus. Cras mattis
-            consectetur purus sit amet fermentum.
+            {this.props.protocol.description}
           </h6>
           <div className="act-btn-ey">
           <span>
@@ -47,19 +47,15 @@ export class CheckComp extends Component {
           lg={{ span: 3, offset: 0 }}
           xl={{ span: 3, offset: 0 }}
         >    */}
-            <Fab color="primary" aria-label="Add" >
+            <Fab color="primary" aria-label="Add">
               <CheckIcon />
              </Fab>
             {/* </Col> */}
 
-          </span>
-          <Badge badgeContent={4} style={{
-              float : "right !important"
-          }}>
-                <Icon type="message" theme="filled" style={{
-                    fontSize : "1.5rem",
-                }}/>
-            </Badge>
+            </span>
+            <IconButton onClick={this.props.handleEdit}>
+              <EditIcon/>
+            </IconButton>
           </div>
         </Col>
       </Row>

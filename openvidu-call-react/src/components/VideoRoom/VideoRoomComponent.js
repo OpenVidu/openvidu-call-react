@@ -8,8 +8,7 @@ import ChatComponent from '../chat/ChatComponent';
 import OpenViduLayout from '../../layout/openvidu-layout';
 import UserModel from '../../models/user-model';
 import ToolbarComponent from '../toolbar/ToolbarComponent';
-import { Row, Col, Button,Icon } from "antd";
-import { CheckComp } from "../check/checkComp";
+import { CheckList } from "../check/checklist";
 
 
 var localUser = new UserModel();
@@ -391,36 +390,7 @@ class VideoRoomComponent extends Component {
     return (
       <div className="container" id="container">
 
-        <Col
-          className="check-list-ey"
-          xs={{ span: 6, offset: 1 }}
-          sm={{ span: 6, offset: 1 }}
-          mg={{ span: 6, offset: 1 }}
-          lg={{ span: 6, offset: 1 }}
-          xl={{ span: 6, offset: 1 }}
-        >
-          <h2>Abnahmeprotokoll Schimmelschaden <span style={{
-            float: 'right'
-          }}><Icon type="shrink" /></span></h2>
-          <h4>
-            Postillonstraße 17
-            <br />
-            80637 München
-          </h4>
-          <div
-            style={{
-              maxHeight : "50vh",
-              overflowY : "scroll"
-            }}
-          >
-            <CheckComp/>
-            <CheckComp/>
-            <CheckComp/>
-            <CheckComp/>
-          </div>
-          <Button className="btn-check-ey">Bestätigen & Abschließen</Button>
-        </Col>
-
+        <CheckList/>
 
         <div id="layout" className="bounds">
           {this.state.subscribers.map((sub, i) => (
