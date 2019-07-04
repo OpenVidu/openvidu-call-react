@@ -3,7 +3,9 @@ import {BrowserRouter as Router, Route} from "react-router-dom";
 import Login from "./login/Login";
 import VideoRoomComponent from './VideoRoom/VideoRoomComponent'
 
-const serverUrl = 'https:localhost:4443';
+const serverUrl = process.env.REACT_APP_OPENVIDU_URL;
+const serverSec = process.env.REACT_APP_OPENVIDU_SEC;
+
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -51,6 +53,7 @@ class Main extends Component {
                   isWorker={false}
                   isLoggedIn={this.state.isLoggedIn}
                   openviduServerUrl={serverUrl}
+                  openviduSecret={serverSec}
                 />
             }
           />
@@ -63,6 +66,7 @@ class Main extends Component {
                   isWorker={true}
                   isLoggedIn={this.state.isLoggedIn}
                   openviduServerUrl={serverUrl}
+                  openviduSecret={serverSec}
                 />
             }
           />
