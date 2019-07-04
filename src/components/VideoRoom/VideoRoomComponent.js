@@ -138,9 +138,9 @@ class VideoRoomComponent extends Component {
     let publisher;
     if (this.props.isWorker) {
       publisher = this.OV.initPublisher(undefined, {
-        audioSource: false,
+        audioSource: undefined,
         videoSource: undefined,
-        publishAudio: false,
+        publishAudio: true,
         publishVideo: localUser.isVideoActive(),
         resolution: '1280x720',
         frameRate: 30,
