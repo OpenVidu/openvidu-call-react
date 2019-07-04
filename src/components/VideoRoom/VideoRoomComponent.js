@@ -135,9 +135,7 @@ class VideoRoomComponent extends Component {
   }
 
   connectWebCam() {
-    let publisher;
-    if (this.props.isWorker) {
-      publisher = this.OV.initPublisher(undefined, {
+    const publisherWorker = this.OV.initPublisher(undefined, {
         audioSource: undefined,
         videoSource: undefined,
         publishAudio: true,
@@ -146,19 +144,23 @@ class VideoRoomComponent extends Component {
         frameRate: 30,
         insertMode: 'REPLACE',
       });
-    } else {
-      publisher = this.OV.initPublisher(undefined, {
-        audioSource: undefined,
-        videoSource: false,
-        publishAudio: true,
-        publishVideo: false
-      });
-    }
+    const publisherExpert = this.OV.initPublisher(undefined, {
+      audioSource: undefined,
+      videoSource: false,
+      publishAudio: true,
+      publishVideo: false
+    });
 
 
     if (this.state.session.capabilities.publish) {
       if (this.props.isWorker) {
-        this.state.session.publish(publisher).then(() => {
+        this.state.session.publish(publisherWorker).then(() => {
+          if (this.props.joinSession) {
+            this.props.joinSession();
+          }
+        });
+      } else {
+        this.state.session.publish(publisherExpert).then(() => {
           if (this.props.joinSession) {
             this.props.joinSession();
           }
@@ -167,7 +169,12 @@ class VideoRoomComponent extends Component {
     }
     localUser.setNickname(this.state.myUserName);
     localUser.setConnectionId(this.state.session.connection.connectionId);
-    localUser.setStreamManager(publisher);
+    if (this.props.isWorker){
+      localUser.setStreamManager(publisherWorker);
+    } else {
+      localUser.setStreamManager(publisherExpert);
+    }
+
     this.subscribeToUserChanged();
     this.subscribeToStreamDestroyed();
     this.sendSignalUserChanged({isScreenShareActive: localUser.isScreenShareActive()});
@@ -175,7 +182,7 @@ class VideoRoomComponent extends Component {
     this.setState({localUser: localUser}, () => {
       this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
         this.updateLayout();
-        publisher.videos[0].video.parentElement.classList.remove('custom-class');
+        publisherWorker.videos[0].video.parentElement.classList.remove('custom-class');
       });
     });
   }
