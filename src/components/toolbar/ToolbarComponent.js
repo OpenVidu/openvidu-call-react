@@ -30,15 +30,6 @@ export default class ToolbarComponent extends Component {
             src="/User.svg"
             className='icon'
           />)}
-              <button
-                onClick={this.toggleChat}
-                className='icon'
-              >
-                  {this.props.showNotification && <div id="point" />}
-                  <Tooltip title="Chat">
-                      <QuestionAnswer />
-                  </Tooltip>
-              </button>
           </div>
         );
     }
