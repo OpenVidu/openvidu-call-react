@@ -28,7 +28,7 @@ class Login extends Component {
           <div className="details">
           <div>
             <div className="title">
-              Treten Sie dem Termin<br/> zur Abnahme bei
+              Treten Sie dem Termin<br/>   zur Abnahme bei
             </div>
             <div className="info">
               Eingeladen von: Herr Kastner <br/>
@@ -48,7 +48,7 @@ class Login extends Component {
 
                 <input type="password" name="password" placeholder="Password" value={this.state.password} />
 
-                <input type="submit" value="Abnahme Beitreten" onClick={this.handleSubmit}/>
+                <input type="submit" value="Abnahme Beitreten" className="lg-btn-ey" onClick={this.handleSubmit}/>
               </form>
             </div>
 

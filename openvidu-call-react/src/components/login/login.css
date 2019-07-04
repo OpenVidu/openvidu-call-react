@@ -27,6 +27,10 @@
     width: 60%;
 }
 
+.lg-btn-ey{
+    padding: 25px 20px !important;
+}
+
 .login-box {
     padding: 0 8% 0 3%;
     width:40%;
