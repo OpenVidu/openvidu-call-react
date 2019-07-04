@@ -26,18 +26,10 @@ export default class ToolbarComponent extends Component {
         const localUser = this.props.user;
         return (
           <div className="toolbar">
-              <img
-                src="/harry.jpg"
-                className='icon'
-              />
-              <img
-                src="/hermo.jpg"
-                className='icon'
-              />
-              <img
-                src="/ron.jpeg"
-                className='icon'
-              />
+            {[...Array(this.props.numUsers)].map(() => <img
+            src="/User.svg"
+            className='icon'
+          />)}
               <button
                 onClick={this.toggleChat}
                 className='icon'
