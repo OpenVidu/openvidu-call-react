@@ -380,6 +380,7 @@ class VideoRoomComponent extends Component {
           showNotification={this.state.messageReceived}
           leaveSession={this.leaveSession}
           toggleChat={this.toggleChat}
+          numUsers={this.state.subscribers.length}
         />
       </div>
     );
