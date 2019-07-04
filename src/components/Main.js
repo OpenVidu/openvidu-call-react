@@ -3,12 +3,12 @@ import {BrowserRouter as Router, Route} from "react-router-dom";
 import Login from "./login/Login";
 import VideoRoomComponent from './VideoRoom/VideoRoomComponent'
 
+const serverUrl = 'https:localhost:4443';
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoggedIn: false,
-      serverUrl: 'https:localhost:4443'
     }
   }
 
@@ -50,7 +50,7 @@ class Main extends Component {
                   {...props}
                   isWorker={false}
                   isLoggedIn={this.state.isLoggedIn}
-                  openviduServerUrl={this.state.serverUrl}
+                  openviduServerUrl={serverUrl}
                 />
             }
           />
@@ -62,7 +62,7 @@ class Main extends Component {
                   {...props}
                   isWorker={true}
                   isLoggedIn={this.state.isLoggedIn}
-                  openviduServerUrl={this.state.serverUrl}
+                  openviduServerUrl={serverUrl}
                 />
             }
           />
