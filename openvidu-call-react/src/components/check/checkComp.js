@@ -10,6 +10,20 @@ import './checkComp.css';
 import { Row, Col, Button, Icon } from "antd";
 
 export class CheckComp extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      close : false,
+      check :  false
+    }
+  }
+
+
+  handleClickCheck(){
+    
+  }
+
+
   render() {
     return (
       <Row>
@@ -38,13 +52,16 @@ export class CheckComp extends Component {
           xl={{ span: 3, offset: 0 }}
         >    */}
             <Fab
-              color="primary"
+              // color="white"
               aria-label="Add"
-              style={{
-                marginRight : "1rem"}}
+              // style={{
+              //   marginRight : "1rem",
+              //   backgroundColor : '#FF0D6A'
+              // }}
+              className="btn-cross-ey"
               size="small"
             >
-              <CloseIcon />
+              <CloseIcon onClick={this.handleClickClose} />
              </Fab>
             {/* </Col>
         <Col
@@ -55,11 +72,11 @@ export class CheckComp extends Component {
           xl={{ span: 3, offset: 0 }}
         >    */}
             <Fab
-              color="primary"
               aria-label="Add"
               size="small"
+              className="btn-tick-ey"
             >
-              <CheckIcon />
+              <CheckIcon onClick={this.handleClickCheck} />
              </Fab>
             {/* </Col> */}
 

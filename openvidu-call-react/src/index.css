@@ -1,14 +1,14 @@
 @font-face {
-  font-family: GT America;
+  font-family: 'GT America';
   src: url("/Fonts/GT America/GT America Extended Regular.otf");
 }
 @font-face {
-  font-family: GT America;
+  font-family: "GT America";
   font-weight: bold;
   src: url("/Fonts/GT America/GT America Extended Bold.otf");
 }
 @font-face {
-  font-family: GT America;
+  font-family: "GT America";
   font-weight: 500;
   src: url("/Fonts/GT America/GT-America-Extended-Medium.OTF");
 }

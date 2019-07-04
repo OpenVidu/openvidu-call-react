@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "GTAmerica";
+    src: url(../../Fonts/GTAmerica/GTAmerica-Bold.otf)
+      format("otf");
+    src: url(../../Fonts/GTAmerica/GTAmericaExtendedBold.otf) format("otf");
+}
+
+
 .check-list-ey{
     color: #000;
     z-index: 9999;
@@ -23,6 +31,8 @@
     font-size: 26px;
     font-weight: bold;
     line-height: 29px;
+    font-family: "GT America" !important;
+    font-weight: bold
 }
 
 .check-comp-title{
@@ -50,6 +60,7 @@
     padding: 0 2rem 2rem 2rem;
     font-size: 17px;
     line-height: 24px;
+    border-bottom: 1px solid #979797; 
 }
 
 .check-list-ey .btn-check-ey{
@@ -81,7 +92,7 @@
 }
 
 .check-ind-ey {
-    border: 1px solid #979797;
+    border-bottom: 1px solid #979797;
     max-height: 75vh;
 }
 .check-ind-ey h4{
@@ -174,3 +185,23 @@
     opacity: 0.2;
 }
 
+
+.btn-cross-ey{
+    background-color: #FFFFFF !important;
+    color: #FF0D6A !important;
+    margin-right: 1rem !important
+}
+.btn-cross-ey :focus {
+background-color: #FF0D6A;
+color: white;
+}
+
+
+.btn-tick-ey{
+    background-color: #FFFFFF !important;
+    color: #0014C4 !important
+}
+.btn-tick-ey :focus {
+background-color: #0014C4;
+color: white;
+}

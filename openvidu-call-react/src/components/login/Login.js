@@ -28,7 +28,7 @@ class Login extends Component {
           <div className="details">
           <div>
             <div className="title">
-              Treten Sie dem Termin zur Abnahme bei
+              Treten Sie dem Termin<br/> zur Abnahme bei
             </div>
             <div className="info">
               Eingeladen von: Herr Kastner <br/>
