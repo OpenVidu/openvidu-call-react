@@ -7,9 +7,28 @@ import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import './checkComp.css';
 
-import { Row, Col, Button, Icon } from "antd";
+import { Row, Col } from "antd";
 
 export class CheckComp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isCloseSelected: false,
+      isCheckSelected: false
+    }
+  }
+  selectClose = () => {
+    this.setState({
+      isCloseSelected: true,
+      isCheckSelected: false
+    })
+  }
+  selectCheck= () => {
+    this.setState({
+      isCloseSelected: false,
+      isCheckSelected: true
+    })
+  }
   render() {
     return (
       <Row>
@@ -37,30 +56,61 @@ export class CheckComp extends Component {
           lg={{ span: 3, offset: 0 }}
           xl={{ span: 3, offset: 0 }}
         >    */}
-            <Fab
-              color="primary"
-              aria-label="Add"
-              style={{
-                marginRight : "1rem"}}
-              size="small"
-            >
-              <CloseIcon />
-             </Fab>
-            {/* </Col>
-        <Col
-          xs={{ span: 3, offset: 0 }}
-          sm={{ span: 3, offset: 0 }}
-          mg={{ span: 3, offset: 0 }}
-          lg={{ span: 3, offset: 0 }}
-          xl={{ span: 3, offset: 0 }}
-        >    */}
-            <Fab
-              color="primary"
-              aria-label="Add"
-              size="small"
-            >
-              <CheckIcon />
-             </Fab>
+            {!this.state.isCloseSelected ?
+              <Fab
+                color="default"
+                aria-label="Add"
+                style={{
+                  marginRight: "1rem",
+                  background: '#fff'
+                }}
+                size="small"
+                onClick={this.selectClose}
+              >
+                <CloseIcon
+                  color="secondary"
+                />
+              </Fab>
+              :
+              <Fab
+                color="secondary"
+                variant="outlined"
+                aria-label="Add"
+                style={{
+                  marginRight: "1rem"
+                }}
+                size="small"
+                onClick={this.selectClose}
+              >
+                <CloseIcon/>
+              </Fab>
+            }
+
+            {!this.state.isCheckSelected ?
+
+              <Fab
+                aria-label="Add"
+                style={{
+                  marginRight: "1rem",
+                  background: '#fff'
+                }}
+                size="small"
+                onClick={this.selectCheck}
+              >
+                <CheckIcon
+                  color="primary"
+                />
+              </Fab>
+              :
+              <Fab
+                color="primary"
+                aria-label="Add"
+                size="small"
+                onClick={this.selectCheck}
+              >
+                <CheckIcon/>
+              </Fab>
+            }
             {/* </Col> */}
 
             </span>
