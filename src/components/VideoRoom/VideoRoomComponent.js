@@ -148,9 +148,9 @@ class VideoRoomComponent extends Component {
       });
     } else {
       publisher = this.OV.initPublisher(undefined, {
-        audioSource: false,
+        audioSource: undefined,
         videoSource: false,
-        publishAudio: false,
+        publishAudio: true,
         publishVideo: false
       });
     }
