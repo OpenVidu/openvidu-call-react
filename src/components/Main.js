@@ -8,6 +8,7 @@ class Main extends Component {
     super(props);
     this.state = {
       isLoggedIn: false,
+      serverUrl: 'https:localhost:4443'
     }
   }
 
@@ -49,6 +50,7 @@ class Main extends Component {
                   {...props}
                   isWorker={false}
                   isLoggedIn={this.state.isLoggedIn}
+                  openviduServerUrl={this.state.serverUrl}
                 />
             }
           />
@@ -60,6 +62,7 @@ class Main extends Component {
                   {...props}
                   isWorker={true}
                   isLoggedIn={this.state.isLoggedIn}
+                  openviduServerUrl={this.state.serverUrl}
                 />
             }
           />
