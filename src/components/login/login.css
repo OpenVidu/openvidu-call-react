@@ -1,3 +1,18 @@
+@font-face {
+    font-family: 'GT America Extended Black';
+     src: url('../../Fonts/GT-America/GT-America-Extended-Black.ttf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+
+@font-face {
+    font-family: 'GT America Extended Bold';
+    src: url('../../Fonts/GT-America/GT-America-Extended-Bold.otf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+
+@font-face {
+    font-family: 'GT America Regular';
+    src: url('../../Fonts/GT-America/GTAmerica-Regular.otf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+
 .login{
     background: #F0F5F9;
     margin: 0 10% 0 10%;
@@ -18,7 +33,6 @@
 
 .details, .login-box{
     display: flex;
-    align-items: center;
 }
 
 .details{
@@ -32,7 +46,7 @@
 }
 
 .details .title{
-    font-family: "GT America";
+    font-family: "GT America Extended Black";
     font-size: 38px;
     line-height: 49px;
 }
@@ -45,7 +59,7 @@
 .padding-top-10{
     padding-right: 8%;
     text-align: right;
-    color: #000000;	font-family: "GT America";	font-size: 12px;	line-height: 14px;
+    color: #000000;	font-family: "GT America Regular";	font-size: 12px;	line-height: 14px;
 }
 
 
@@ -67,7 +81,7 @@
 
 input{
     width: 85%;
-    padding: 3px 7px;
+    padding: 6px 7px;
     display: block;
     margin : 8px auto;
     border: 1px solid #ccc;
@@ -78,13 +92,13 @@ input{
   input[type=submit] {
     width: 100%;
     background-color: #0014C4;
-    color: rgb(255, 255, 255, 0.56) ;
-    padding: 14px 20px;
+    color: rgb(255, 255, 255, 0.9) ;
+    padding: 17px 20px;
     border: none;
     border-radius:0 0 7px 7px;
     cursor: pointer;
     margin: 35px 0 0 0;
-    font-family: "GT America";	font-size: 13px;	font-weight: 500;	line-height: 16px;
+    font-family: "GT America Regular";	font-size: 13px;	font-weight: 500;	line-height: 16px;
   }
   
   input[type=submit]:hover {
@@ -93,11 +107,19 @@ input{
 
   h4 {
     padding: 0 21px;
-    font-family: "GT America";	font-size: 20px;	line-height: 25px;
+    font-family: "GT America Extended Bold";	font-size: 20px;	line-height: 25px;
     padding-top: 21px;
+    margin: 0 0 21px 0;
   }
 
-
+.password {
+    text-align: right;
+    padding: 0 8% 0 0;
+    opacity: 0.4;
+    color: #000000;
+    font-family: "GT America Regular";
+    font-size: 10px;
+}
 
 @media only screen and (max-width: 768px) {
 

@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'GT America Bold';
+    src: url('../../Fonts/GT-America/GTAmerica-Bold.otf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+
+@font-face {
+    font-family: 'GT America Regular';
+    src: url('../../Fonts/GT-America/GTAmerica-Regular.otf') format('truetype'); /* Chrome 4+, Firefox 3.5, Opera 10+, Safari 3—5 */
+}
+
 .check-list-ey{
     color: #000;
     z-index: 9999;
@@ -23,6 +33,7 @@
     font-size: 26px;
     font-weight: bold;
     line-height: 29px;
+    font-family: 'GT America Bold';
 }
 
 .check-comp-title{
@@ -30,6 +41,7 @@
     font-size: 17px;
     font-weight: 500;
     line-height: 20px;
+    font-family: 'GT America Regular';
 }
 
 .fusce-dapibus-tellu {
@@ -44,12 +56,14 @@
     font-size: 11px;
     line-height: 13px;
     padding: 0.5rem 2rem 0.5rem 2rem;
+    font-family: National;
 }
 
 .address{
     padding: 0 2rem 2rem 2rem;
     font-size: 17px;
     line-height: 24px;
+    font-family: 'GT America Regular';
 }
 
 .check-list-ey .btn-check-ey{
@@ -63,6 +77,7 @@
     color: white;
     height: 4rem;
     cursor: pointer;
+    color: #FFFFFF;	font-family: National;	font-size: 16px;	line-height: 19px;	text-align: center;
 }
 
 .btn-check-ey-2{
@@ -151,7 +166,7 @@
 
 .edit-box-text{
     color: #FFFFFF;
-    font-family: "GT America", serif;
+    font-family: "GT America Regular", serif;
     padding: 2rem 2rem 0 2rem;
 }
 
@@ -164,6 +179,7 @@
 .edit-input textarea {
     color: white;
     padding: 0 2rem 0 2rem;
+    font-family: Source Code Pro;
 }
 
 .line-2 {

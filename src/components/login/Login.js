@@ -48,6 +48,8 @@ class Login extends Component {
 
                 <input type="password" name="password" placeholder="Password" value={this.state.password} />
 
+                <div class="password">Password vergessen</div>
+
                 <input type="submit" value="Abnahme Beitreten" onClick={this.handleSubmit}/>
               </form>
             </div>
