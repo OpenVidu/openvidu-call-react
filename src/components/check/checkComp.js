@@ -18,12 +18,14 @@ export class CheckComp extends Component {
     }
   }
   selectClose = () => {
+    this.props.clickClose()
     this.setState({
       isCloseSelected: true,
       isCheckSelected: false
     })
   }
   selectCheck= () => {
+    this.props.clickCheck()
     this.setState({
       isCloseSelected: false,
       isCheckSelected: true
@@ -115,7 +117,9 @@ export class CheckComp extends Component {
 
             </span>
             <IconButton onClick={this.props.handleEdit}>
-              <EditIcon/>
+              <EditIcon                 style={{
+                  color : 'black'
+                }}/>
             </IconButton>
           </div>
         </Col>

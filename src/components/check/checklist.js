@@ -16,6 +16,7 @@ export class CheckList extends Component{
   constructor(props) {
     super(props);
     this.state = {
+      btnCheked :  0,
       protocols: [
         {
           title: 'Sichtbarer Schimmel',
@@ -55,6 +56,25 @@ export class CheckList extends Component{
 
     })
   }
+
+  disableBtnClose = () =>{
+    let val  = this.state.btnCheked - 1
+    console.log(this.state.btnCheked,this.state.protocols.length, val ,"disabled close button")
+      this.setState({
+        btnCheked : val
+      })
+  }
+
+  disableBtn = () => {
+    let val  = this.state.btnCheked + 1
+    console.log(this.state.btnCheked,this.state.protocols.length, val ,"disabled button")
+    if(val <= this.state.protocols.length){
+      this.setState({
+        btnCheked : val
+      })
+    }
+  }
+
   closeEdit = () => {
     this.setState({
       isEditing: false,
@@ -133,12 +153,15 @@ export class CheckList extends Component{
               overflowY : "scroll"
             }}
           >
-            <CheckComp handleEdit={() => this.onEdit(0)} protocol={this.state.protocols[0]}/>
-            <CheckComp handleEdit={() => this.onEdit(1)} protocol={this.state.protocols[1]}/>
-            <CheckComp handleEdit={() => this.onEdit(2)} protocol={this.state.protocols[2]}/>
+            <CheckComp handleEdit={() => this.onEdit(0)} clickCheck={this.disableBtn} clickClose={this.disableBtnClose} protocol={this.state.protocols[0]}/>
+            <CheckComp handleEdit={() => this.onEdit(1)} clickCheck={this.disableBtn} clickClose={this.disableBtnClose} protocol={this.state.protocols[1]}/>
+            <CheckComp handleEdit={() => this.onEdit(2)} clickCheck={this.disableBtn} clickClose={this.disableBtnClose} protocol={this.state.protocols[2]}/>
           </div>
         }
-        <Button className="btn-check-ey">Bestätigen & Abschließen</Button>
+        {
+          this.state.btnCheked === this.state.protocols.length ? <Button className="btn-check-ey">Bestätigen & Abschließen</Button> : <Button style={{backgroundColor : 'red !important' ,color : "grey" , cursor : "disabled"}} className="btn-check-ey">Bestätigen & Abschließen</Button>
+        }
+        
       </div>
       { this.state.isEditing ?
         <div

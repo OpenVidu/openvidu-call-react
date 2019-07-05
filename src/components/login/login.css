@@ -15,9 +15,10 @@
 
 .login{
     background: #F0F5F9;
-    margin: 0 10% 0 10%;
+    /* margin: 0 10% 0 10%; */
     display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
 .login .head{
@@ -28,7 +29,7 @@
 
 .login .foot{
     width: 100%;
-    padding-bottom: 9%;
+    /* padding-bottom: 9%; */
 }
 
 .details, .login-box{
@@ -52,7 +53,8 @@
 }
 
 .info {
-    font-family: "GT America";	font-size: 18px;	line-height: 25px;
+    font-family: "GT America Regular";
+    	font-size: 18px;	line-height: 25px;
     padding-top: 17px;
 }
 
@@ -64,8 +66,8 @@
 
 
 .logo {
-    width: 10px;
-    height: 10px;
+    width: 5%;
+    /* height: 10px; */
 }
 
 .user{
@@ -135,6 +137,8 @@ input{
 
     .small-screen-login{
         padding: 0 5%;
+        width: 90%;
+
     }
 
     .details, .login-box{
@@ -148,5 +152,26 @@ input{
     .user{
         width: auto;
     }
+
+}
+.check-list-ey{
+    margin-bottom: 3%;
+}
+
+
+
+
+.check-comp-description{
+    padding: 0.5rem 8rem 0.5rem 2rem;
+    font-family: 'GT America Regular';
+}
+
+.lg-btn-inp-ey{
+    height: 35px;		border: 1px solid #777E83;	border-radius: 4px;
+}
+
+.small-screen-login{
+    /* padding: 0 5%; */
+    width: 90%;
 
 }

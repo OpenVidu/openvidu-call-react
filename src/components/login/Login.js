@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import './login.css'
-import logo from '../images/logo.svg'
+import logo from '../images/logo.svg';
+import buo from "../images/buo.png";
+import eayse from "../images/eayse.svg"
 
 class Login extends Component {
   constructor(props) {
@@ -42,15 +44,15 @@ class Login extends Component {
           <div className="login-box">
           <div className="small-screen-login">
             <div className='user'>
-              <h4>Loggen Sie mit lhrem <span className='blue-font'>B&O Account</span> ein</h4>
+              <h4>Loggen Sie mit lhrem <br/><span className='blue-font'>B&O Account</span> ein</h4>
               <form>
-                <input type="email" name="email" placeholder="E-mail Address" value={this.state.email}/>
+                <input type="email" name="email" placeholder="E-mail Address" className="lg-btn-inp-ey" value={this.state.email}/>
 
-                <input type="password" name="password" placeholder="Password" value={this.state.password} />
+                <input type="password" name="password" placeholder="Password" className="lg-btn-inp-ey"  value={this.state.password} />
 
                 <div class="password">Password vergessen</div>
 
-                <input type="submit" value="Abnahme Beitreten" onClick={this.handleSubmit}/>
+                <input type="submit" value="Abnahme Beitreten" style={{margin: '45px 0 0 0'}} onClick={this.handleSubmit}/>
               </form>
             </div>
 
@@ -59,8 +61,8 @@ class Login extends Component {
         </div>
         <div className="foot">
             <div className="padding-top-10">
-                Kommunikationstaol von <img src={logo} className="logo" alt="Logo" /><br />
-                Powered by <img src={logo} className="logo" alt="Logo" />
+                Kommunikationstaol von <img src={buo} className="logo" alt="Logo" /><br />
+                Powered by <img src={eayse} className="logo" alt="Logo" />
             </div>
         </div>
       </div>

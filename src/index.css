@@ -12,6 +12,11 @@
   font-weight: 500;
   src: url("/Fonts/GT America/GT-America-Extended-Medium.OTF");
 }
+@font-face {
+  font-family: GT America;
+  /* font-weight: 500; */
+  src: url("/Fonts/GT-America/GT-America-Regular.otf");
+}
 html{
   height: 100%;
   margin: 0;
@@ -29,3 +34,11 @@ body {
   height: 100%;
   margin: 0;
 }
+
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+
