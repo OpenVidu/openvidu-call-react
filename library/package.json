@@ -10,10 +10,12 @@
     },
     "description": "OpenVidu React",
     "devDependencies": {
-        "babel-cli": "6.26.0",
+        "@babel/cli": "7.10.5",
+        "@babel/core": "7.11.4",
+        "@babel/preset-react": "7.10.4",
         "react": "16.13.1",
         "react-dom": "16.13.1",
-        "react-scripts": "1.1.5"
+        "react-scripts": "3.4.3"
     },
     "files": [
         "dist",
