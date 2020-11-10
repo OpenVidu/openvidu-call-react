@@ -506,7 +506,7 @@ class VideoRoomComponent extends Component {
         return new Promise((resolve, reject) => {
             var data = JSON.stringify({ customSessionId: sessionId });
             axios
-                .post(this.OPENVIDU_SERVER_URL + '/api/sessions', data, {
+                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
                     headers: {
                         Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
@@ -544,9 +544,9 @@ class VideoRoomComponent extends Component {
 
     createToken(sessionId) {
         return new Promise((resolve, reject) => {
-            var data = JSON.stringify({ session: sessionId });
+            var data = JSON.stringify({});
             axios
-                .post(this.OPENVIDU_SERVER_URL + '/api/tokens', data, {
+                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
                     headers: {
                         Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
