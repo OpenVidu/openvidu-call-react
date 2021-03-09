@@ -83,9 +83,14 @@ class VideoRoomComponent extends Component {
     joinSession() {
         this.OV = new OpenVidu();
 
+        const session = this.OV.initSession();
+        if(this.props.setSession) {
+            this.props.setSession(session);
+        }
+
         this.setState(
             {
-                session: this.OV.initSession(),
+                session: session,
             },
             () => {
                 this.subscribeToStreamCreated();
@@ -137,8 +142,8 @@ class VideoRoomComponent extends Component {
             videoSource: undefined,
             publishAudio: localUser.isAudioActive(),
             publishVideo: localUser.isVideoActive(),
-            resolution: '640x480',
-            frameRate: 30,
+            resolution: '480x320',
+            frameRate: 10,
             insertMode: 'APPEND',
         });
 
@@ -463,12 +468,12 @@ class VideoRoomComponent extends Component {
                 <div id="layout" className="bounds">
                     {localUser !== undefined && localUser.getStreamManager() !== undefined && (
                         <div className="OT_root OT_publisher custom-class" id="localUser">
-                            <StreamComponent user={localUser} handleNickname={this.nicknameChanged} />
+                            <StreamComponent user={localUser} handleNickname={this.nicknameChanged} disconnectUser={this.props.disconnectUser} />
                         </div>
                     )}
                     {this.state.subscribers.map((sub, i) => (
                         <div key={i} className="OT_root OT_publisher custom-class" id="remoteUsers">
-                            <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} />
+                            <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} disconnectUser={this.props.disconnectUser} />
                         </div>
                     ))}
                     {localUser !== undefined && localUser.getStreamManager() !== undefined && (

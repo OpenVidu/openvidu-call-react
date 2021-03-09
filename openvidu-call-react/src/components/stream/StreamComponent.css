@@ -80,6 +80,16 @@ video {
     z-index: 1000;
     color: #ffffff;
 }
+
+#disconnectButton {
+    background-color: #f04747;
+    position: absolute;
+    bottom: 100px;
+    right: 1px;
+    z-index: 1000;
+    color: #ffffff;
+}
+
 /* Contains the video element, used to fix video letter-boxing */
 .OT_widget-container {
     width: 100%;

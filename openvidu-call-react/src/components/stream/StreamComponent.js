@@ -4,6 +4,7 @@ import OvVideoComponent from './OvVideo';
 
 import MicOff from '@material-ui/icons/MicOff';
 import VideocamOff from '@material-ui/icons/VideocamOff';
+import CallEndIcon from '@material-ui/icons/CallEnd';
 import VolumeUp from '@material-ui/icons/VolumeUp';
 import VolumeOff from '@material-ui/icons/VolumeOff';
 import FormControl from '@material-ui/core/FormControl';
@@ -79,11 +80,11 @@ export default class StreamComponent extends Component {
                             )}
                         </FormControl>
                     ) : (
-                        <div onClick={this.toggleNicknameForm}>
-                            <span id="nickname">{this.props.user.getNickname()}</span>
-                            {this.props.user.isLocal() && <span id=""> (edit)</span>}
-                        </div>
-                    )}
+                            <div onClick={this.toggleNicknameForm}>
+                                <span id="nickname">{this.props.user.getNickname()}</span>
+                                {this.props.user.isLocal() && <span id=""> (edit)</span>}
+                            </div>
+                        )}
                 </div>
 
                 {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (
@@ -104,9 +105,17 @@ export default class StreamComponent extends Component {
                         </div>
                         <div>
                             {!this.props.user.isLocal() && (
-                                <IconButton id="volumeButton" onClick={this.toggleSound}>
-                                    {this.state.mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
-                                </IconButton>
+                                <>
+                                    <IconButton id="volumeButton" onClick={this.toggleSound}>
+                                        {this.state.mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
+                                    </IconButton>
+
+                                    {this.props.disconnectUser &&
+                                        <IconButton onClick={() => this.props.disconnectUser(this.props.user)} id="disconnectButton">
+                                            <CallEndIcon/>
+                                        </IconButton>
+                                    }
+                                </>
                             )}
                         </div>
                     </div>

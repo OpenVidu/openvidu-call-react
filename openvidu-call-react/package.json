@@ -15,7 +15,7 @@
         "react-dom": "16.13.1",
         "react-scripts": "^3.4.3"
     },
-    "name": "openvidu-call-react",
+    "name": "@caredotcoach/openvidu-react-fixed",
     "private": true,
     "scripts": {
         "build": "react-scripts build",
@@ -24,5 +24,5 @@
         "start": "react-scripts start",
         "test": "react-scripts test --env=jsdom"
     },
-    "version": "2.16.0"
+    "version": "2.16.1"
 }
