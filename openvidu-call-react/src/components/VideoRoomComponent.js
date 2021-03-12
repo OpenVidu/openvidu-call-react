@@ -30,6 +30,8 @@ class VideoRoomComponent extends Component {
             localUser: undefined,
             subscribers: [],
             chatDisplay: 'none',
+            isFrontCamera: true,
+            isToggleable: false,
         };
 
         this.joinSession = this.joinSession.bind(this);
@@ -44,6 +46,7 @@ class VideoRoomComponent extends Component {
         this.stopScreenShare = this.stopScreenShare.bind(this);
         this.closeDialogExtension = this.closeDialogExtension.bind(this);
         this.toggleChat = this.toggleChat.bind(this);
+        this.toggleCamera = this.toggleCamera.bind(this);
         this.checkNotification = this.checkNotification.bind(this);
         this.checkSize = this.checkSize.bind(this);
     }
@@ -83,8 +86,12 @@ class VideoRoomComponent extends Component {
     joinSession() {
         this.OV = new OpenVidu();
 
+        this.OV.getDevices().then(devices => {
+            this.setState({ isToggleable: devices.filter(device => device.kind === 'videoinput').length > 1 })
+        });
+
         const session = this.OV.initSession();
-        if(this.props.setSession) {
+        if (this.props.setSession) {
             this.props.setSession(session);
         }
 
@@ -109,12 +116,12 @@ class VideoRoomComponent extends Component {
                 console.log(token);
                 this.connect(token);
             }).catch((error) => {
-                if(this.props.error){
+                if (this.props.error) {
                     this.props.error({ error: error.error, messgae: error.message, code: error.code, status: error.status });
                 }
                 console.log('There was an error getting the token:', error.code, error.message);
                 alert('There was an error getting the token:', error.message);
-              });
+            });
         }
     }
 
@@ -128,7 +135,7 @@ class VideoRoomComponent extends Component {
                 this.connectWebCam();
             })
             .catch((error) => {
-                if(this.props.error){
+                if (this.props.error) {
                     this.props.error({ error: error.error, messgae: error.message, code: error.code, status: error.status });
                 }
                 alert('There was an error connecting to the session:', error.message);
@@ -137,35 +144,39 @@ class VideoRoomComponent extends Component {
     }
 
     connectWebCam() {
-        let publisher = this.OV.initPublisher(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: localUser.isAudioActive(),
-            publishVideo: localUser.isVideoActive(),
-            resolution: '480x320',
-            frameRate: 10,
-            insertMode: 'APPEND',
-        });
+        this.OV.getDevices().then(devices => {
+            const videoDevices = devices.filter(device => device.kind === 'videoinput').sort((a) => a.label.includes('front') ? -1 : 1);
 
-        if (this.state.session.capabilities.publish) {
-            this.state.session.publish(publisher).then(() => {
-                if (this.props.joinSession) {
-                    this.props.joinSession();
-                }
+            let publisher = this.OV.initPublisher(undefined, {
+                audioSource: undefined,
+                videoSource: videoDevices[0],
+                publishAudio: localUser.isAudioActive(),
+                publishVideo: localUser.isVideoActive(),
+                resolution: '480x320',
+                frameRate: 10,
+                insertMode: 'APPEND',
             });
-        }
-        localUser.setNickname(this.state.myUserName);
-        localUser.setConnectionId(this.state.session.connection.connectionId);
-        localUser.setScreenShareActive(false);
-        localUser.setStreamManager(publisher);
-        this.subscribeToUserChanged();
-        this.subscribeToStreamDestroyed();
-        this.sendSignalUserChanged({ isScreenShareActive: localUser.isScreenShareActive() });
-
-        this.setState({ localUser: localUser }, () => {
-            this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
-                this.updateLayout();
-                publisher.videos[0].video.parentElement.classList.remove('custom-class');
+    
+            if (this.state.session.capabilities.publish) {
+                this.state.session.publish(publisher).then(() => {
+                    if (this.props.joinSession) {
+                        this.props.joinSession();
+                    }
+                });
+            }
+            localUser.setNickname(this.state.myUserName);
+            localUser.setConnectionId(this.state.session.connection.connectionId);
+            localUser.setScreenShareActive(false);
+            localUser.setStreamManager(publisher);
+            this.subscribeToUserChanged();
+            this.subscribeToStreamDestroyed();
+            this.sendSignalUserChanged({ isScreenShareActive: localUser.isScreenShareActive() });
+    
+            this.setState({ localUser: localUser }, () => {
+                this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
+                    this.updateLayout();
+                    publisher.videos[0].video.parentElement.classList.remove('custom-class');
+                });
             });
         });
     }
@@ -428,6 +439,44 @@ class VideoRoomComponent extends Component {
         this.updateLayout();
     }
 
+    toggleCamera() {
+        this.OV.getDevices().then(devices => {
+            // Getting only the video devices
+            const videoDevices = devices.filter(device => device.kind === 'videoinput').sort((a) => a.label.includes('front') ? -1 : 1);
+
+            if (videoDevices && videoDevices.length > 1) {
+
+                // Creating a new publisher with specific videoSource
+                // In mobile devices the default and first camera is the front one
+                const publisher = this.OV.initPublisher(undefined, {
+                    videoSource: this.state.isFrontCamera ? videoDevices[1].deviceId : videoDevices[0].deviceId,
+                    publishAudio: localUser.isAudioActive(),
+                    publishVideo: true,
+                    resolution: '480x320',
+                    frameRate: 10,
+                    insertMode: 'APPEND',
+                    mirror: !this.state.isFrontCamera // Setting mirror enable if front camera is selected
+                });
+
+                // Changing isFrontCamera value
+                this.setState({
+                    isFrontCamera: !this.state.isFrontCamera,
+                });
+
+                // Unpublishing the old publisher
+                this.state.session.unpublish(localUser.getStreamManager());
+
+                localUser.setStreamManager(publisher);
+
+                // Publishing the new publisher
+                this.state.session.publish(localUser.getStreamManager());
+
+                localUser.setVideoActive(true);
+                this.setState({ localUser: localUser });
+            }
+        });
+    }
+
     checkNotification(event) {
         this.setState({
             messageReceived: this.state.chatDisplay === 'none',
@@ -461,6 +510,8 @@ class VideoRoomComponent extends Component {
                     toggleFullscreen={this.toggleFullscreen}
                     leaveSession={this.leaveSession}
                     toggleChat={this.toggleChat}
+                    toggleCamera={this.toggleCamera}
+                    isToggleable={this.state.isToggleable}
                 />
 
                 <DialogExtensionComponent showDialog={this.state.showExtensionDialog} cancelClicked={this.closeDialogExtension} />
@@ -533,11 +584,11 @@ class VideoRoomComponent extends Component {
                         if (
                             window.confirm(
                                 'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"\n\nClick OK to navigate and accept it. ' +
-                                    'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"',
+                                this.OPENVIDU_SERVER_URL +
+                                '"\n\nClick OK to navigate and accept it. ' +
+                                'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
+                                this.OPENVIDU_SERVER_URL +
+                                '"',
                             )
                         ) {
                             window.location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');

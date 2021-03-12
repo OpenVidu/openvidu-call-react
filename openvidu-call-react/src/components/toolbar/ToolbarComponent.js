@@ -16,6 +16,7 @@ import StopScreenShare from '@material-ui/icons/StopScreenShare';
 import Tooltip from '@material-ui/core/Tooltip';
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
+import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
 
 import IconButton from '@material-ui/core/IconButton';
 
@@ -32,6 +33,7 @@ export default class ToolbarComponent extends Component {
         this.toggleFullscreen = this.toggleFullscreen.bind(this);
         this.leaveSession = this.leaveSession.bind(this);
         this.toggleChat = this.toggleChat.bind(this);
+        this.toggleCamera = this.toggleCamera.bind(this);
     }
 
 
@@ -62,6 +64,10 @@ export default class ToolbarComponent extends Component {
 
     toggleChat() {
         this.props.toggleChat();
+    }
+
+    toggleCamera() {
+        this.props.toggleCamera();
     }
 
     render() {
@@ -95,6 +101,12 @@ export default class ToolbarComponent extends Component {
                             )}
                         </IconButton>
 
+                        {this.props.isToggleable &&
+                            <IconButton color="inherit" className="navButton" id="navToggleCamButton" onClick={this.toggleCamera}>
+                                <FlipCameraIosIcon />
+                            </IconButton>
+                        }
+                        
                         <IconButton color="inherit" className="navButton" onClick={this.screenShare}>
                             {localUser !== undefined && localUser.isScreenShareActive() ? <PictureInPicture /> : <ScreenShare />}
                         </IconButton>
@@ -112,7 +124,7 @@ export default class ToolbarComponent extends Component {
                         <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
                             <PowerSettingsNew />
                         </IconButton>
-                         <IconButton color="inherit" onClick={this.toggleChat} id="navChatButton">
+                        <IconButton color="inherit" onClick={this.toggleChat} id="navChatButton">
                             {this.props.showNotification && <div id="point" className="" />}
                             <Tooltip title="Chat">
                                 <QuestionAnswer />
