@@ -129,7 +129,10 @@ class VideoRoomComponent extends Component {
         this.state.session
             .connect(
                 token,
-                { clientData: this.state.myUserName },
+                {
+                    clientData: this.state.myUserName,
+                    providerData: this.props.providerData,
+                },
             )
             .then(() => {
                 this.connectWebCam();
@@ -156,7 +159,7 @@ class VideoRoomComponent extends Component {
                 frameRate: 10,
                 insertMode: 'APPEND',
             });
-    
+
             if (this.state.session.capabilities.publish) {
                 this.state.session.publish(publisher).then(() => {
                     if (this.props.joinSession) {
@@ -171,7 +174,7 @@ class VideoRoomComponent extends Component {
             this.subscribeToUserChanged();
             this.subscribeToStreamDestroyed();
             this.sendSignalUserChanged({ isScreenShareActive: localUser.isScreenShareActive() });
-    
+
             this.setState({ localUser: localUser }, () => {
                 this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
                     this.updateLayout();
