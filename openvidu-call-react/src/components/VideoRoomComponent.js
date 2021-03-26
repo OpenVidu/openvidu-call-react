@@ -522,12 +522,12 @@ class VideoRoomComponent extends Component {
                 <div id="layout" className="bounds">
                     {localUser !== undefined && localUser.getStreamManager() !== undefined && (
                         <div className="OT_root OT_publisher custom-class" id="localUser">
-                            <StreamComponent user={localUser} handleNickname={this.nicknameChanged} disconnectUser={this.props.disconnectUser} />
+                            <StreamComponent user={localUser} handleNickname={this.nicknameChanged} />
                         </div>
                     )}
                     {this.state.subscribers.map((sub, i) => (
                         <div key={i} className="OT_root OT_publisher custom-class" id="remoteUsers">
-                            <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} disconnectUser={this.props.disconnectUser} />
+                            <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} disconnectUser={!JSON.parse(sub.streamManager.stream.connection.data).providerData && this.props.disconnectUser} />
                         </div>
                     ))}
                     {localUser !== undefined && localUser.getStreamManager() !== undefined && (
