@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 import './StreamComponent.css';
 
 export default class OvVideoComponent extends Component {
@@ -26,17 +27,27 @@ export default class OvVideoComponent extends Component {
     componentDidUpdate(props) {
         if (props && !!this.videoRef) {
             this.props.user.getStreamManager().addVideoElement(this.videoRef.current);
+            console.log(this.props.user.getStreamManager().stream.streamId)
         }
     }
 
     render() {
         return (
-            <video
-                autoPlay={true}
-                id={'video-' + this.props.user.getStreamManager().stream.streamId}
-                ref={this.videoRef}
-                muted={this.props.mutedSound}
-            />
+            <>
+                <video
+                    autoPlay={true}
+                    id={'video-' + this.props.user.getStreamManager().stream.streamId}
+                    ref={this.videoRef}
+                    muted={this.props.mutedSound}
+                    style={{ display: !this.props.user.getStreamManager().stream.hasVideo ? 'none' : 'block' }}
+                />
+
+                {!this.props.user.getStreamManager().stream.hasVideo &&
+                    <div className='noVideoContainer'>
+                        <VideocamOffIcon style={{ width: '50%', height: 'auto' }}></VideocamOffIcon>
+                    </div>
+                }
+            </>
         );
     }
 }

@@ -86,10 +86,6 @@ class VideoRoomComponent extends Component {
     joinSession() {
         this.OV = new OpenVidu();
 
-        this.OV.getDevices().then(devices => {
-            this.setState({ isToggleable: devices.filter(device => device.kind === 'videoinput').length > 1 })
-        });
-
         const session = this.OV.initSession();
         if (this.props.setSession) {
             this.props.setSession(session);
@@ -152,12 +148,19 @@ class VideoRoomComponent extends Component {
 
             let publisher = this.OV.initPublisher(undefined, {
                 audioSource: undefined,
-                videoSource: videoDevices[0],
+                videoSource: videoDevices[0] || false,
                 publishAudio: localUser.isAudioActive(),
                 publishVideo: localUser.isVideoActive(),
                 resolution: '480x320',
                 frameRate: 10,
                 insertMode: 'APPEND',
+                mirror: !this.state.isFrontCamera
+            });
+
+            publisher.on('accessAllowed', () => {
+                this.OV.getDevices().then(devices => {
+                    this.setState({ isToggleable: devices.filter(device => device.kind === 'videoinput').length > 1 })
+                });
             });
 
             if (this.state.session.capabilities.publish) {
@@ -447,36 +450,15 @@ class VideoRoomComponent extends Component {
             // Getting only the video devices
             const videoDevices = devices.filter(device => device.kind === 'videoinput').sort((a) => a.label.includes('front') ? -1 : 1);
 
-            if (videoDevices && videoDevices.length > 1) {
-
-                // Creating a new publisher with specific videoSource
-                // In mobile devices the default and first camera is the front one
-                const publisher = this.OV.initPublisher(undefined, {
-                    videoSource: this.state.isFrontCamera ? videoDevices[1].deviceId : videoDevices[0].deviceId,
-                    publishAudio: localUser.isAudioActive(),
-                    publishVideo: true,
-                    resolution: '480x320',
-                    frameRate: 10,
-                    insertMode: 'APPEND',
-                    mirror: !this.state.isFrontCamera // Setting mirror enable if front camera is selected
+            this.OV.getUserMedia({ audioSource: false, videoSource: this.state.isFrontCamera ? videoDevices[1].deviceId : videoDevices[0].deviceId })
+                .then(function (media) {
+                    var track = media.getVideoTracks()[0];
+                    localUser.getStreamManager().replaceTrack(track);
                 });
 
-                // Changing isFrontCamera value
-                this.setState({
-                    isFrontCamera: !this.state.isFrontCamera,
-                });
-
-                // Unpublishing the old publisher
-                this.state.session.unpublish(localUser.getStreamManager());
-
-                localUser.setStreamManager(publisher);
-
-                // Publishing the new publisher
-                this.state.session.publish(localUser.getStreamManager());
-
-                localUser.setVideoActive(true);
-                this.setState({ localUser: localUser });
-            }
+            this.setState({
+                isFrontCamera: !this.state.isFrontCamera,
+            });
         });
     }
 

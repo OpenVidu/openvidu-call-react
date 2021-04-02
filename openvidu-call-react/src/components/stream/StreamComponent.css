@@ -50,6 +50,14 @@ video {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.noVideoContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #statusIcons {
     bottom: 0;
     background: #c71100;
