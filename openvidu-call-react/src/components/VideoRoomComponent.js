@@ -144,6 +144,7 @@ class VideoRoomComponent extends Component {
 
     connectWebCam() {
         this.OV.getDevices().then(devices => {
+            console.log(devices);
             const videoDevices = devices.filter(device => device.kind === 'videoinput').sort((a) => a.label.includes('front') ? -1 : 1);
 
             let publisher = this.OV.initPublisher(undefined, {
@@ -161,6 +162,27 @@ class VideoRoomComponent extends Component {
                 this.OV.getDevices().then(devices => {
                     this.setState({ isToggleable: devices.filter(device => device.kind === 'videoinput').length > 1 })
                 });
+            });
+
+            publisher.on('accessDenied', (error) => {
+                if(error.name === 'DEVICE_ALREADY_IN_USE') {
+                    const publisher = this.OV.initPublisher(undefined, {
+                        videoSource: false,
+                        publishAudio: localUser.isAudioActive(),
+                        publishVideo: true,
+                        resolution: '480x320',
+                        frameRate: 10,
+                        insertMode: 'APPEND',
+                        mirror: !this.state.isFrontCamera 
+                    });
+    
+                    // Unpublishing the old publisher
+                    localUser.setStreamManager(publisher);
+    
+                    // Publishing the new publisher
+                    this.state.session.publish(localUser.getStreamManager());
+                    this.setState({ localUser: localUser });
+                }
             });
 
             if (this.state.session.capabilities.publish) {
