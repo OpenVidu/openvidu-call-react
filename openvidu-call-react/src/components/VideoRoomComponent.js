@@ -144,7 +144,6 @@ class VideoRoomComponent extends Component {
 
     connectWebCam() {
         this.OV.getDevices().then(devices => {
-            console.log(devices);
             const videoDevices = devices.filter(device => device.kind === 'videoinput').sort((a) => a.label.includes('front') ? -1 : 1);
 
             let publisher = this.OV.initPublisher(undefined, {
