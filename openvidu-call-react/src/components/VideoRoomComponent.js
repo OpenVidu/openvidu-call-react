@@ -163,6 +163,27 @@ class VideoRoomComponent extends Component {
                 });
             });
 
+            publisher.on('accessDenied', (error) => {
+                if(error.name === 'DEVICE_ALREADY_IN_USE') {
+                    const publisher = this.OV.initPublisher(undefined, {
+                        videoSource: false,
+                        publishAudio: localUser.isAudioActive(),
+                        publishVideo: true,
+                        resolution: '480x320',
+                        frameRate: 10,
+                        insertMode: 'APPEND',
+                        mirror: !this.state.isFrontCamera 
+                    });
+    
+                    // Unpublishing the old publisher
+                    localUser.setStreamManager(publisher);
+    
+                    // Publishing the new publisher
+                    this.state.session.publish(localUser.getStreamManager());
+                    this.setState({ localUser: localUser });
+                }
+            });
+
             if (this.state.session.capabilities.publish) {
                 this.state.session.publish(publisher).then(() => {
                     if (this.props.joinSession) {
