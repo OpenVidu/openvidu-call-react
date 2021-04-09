@@ -15,6 +15,7 @@ var localUser = new UserModel();
 class VideoRoomComponent extends Component {
     constructor(props) {
         super(props);
+        //TODO remove the default props and use proptypes validation instead
         this.OPENVIDU_SERVER_URL = this.props.openviduServerUrl
             ? this.props.openviduServerUrl
             : 'https://' + window.location.hostname + ':4443';
@@ -23,6 +24,7 @@ class VideoRoomComponent extends Component {
         this.layout = new OpenViduLayout();
         let sessionName = this.props.sessionName ? this.props.sessionName : 'SessionA';
         let userName = this.props.user ? this.props.user : 'OpenVidu_User' + Math.floor(Math.random() * 100);
+        //TODO add layout customization props and composition options for layout and functionality
         this.state = {
             mySessionId: sessionName,
             myUserName: userName,
@@ -32,6 +34,7 @@ class VideoRoomComponent extends Component {
             chatDisplay: 'none',
         };
 
+        //TODO remove the default session handlers and move to proptypes
         this.joinSession = this.joinSession.bind(this);
         this.leaveSession = this.leaveSession.bind(this);
         this.onbeforeunload = this.onbeforeunload.bind(this);
@@ -486,6 +489,7 @@ class VideoRoomComponent extends Component {
         );
     }
 
+    //TODO remove the server-side code
     /**
      * --------------------------
      * SERVER-SIDE RESPONSIBILITY
