@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import './VideoRoomComponent.css';
 import { OpenVidu } from 'openvidu-browser';
 import StreamComponent from './stream/StreamComponent';
@@ -9,22 +8,17 @@ import ChatComponent from './chat/ChatComponent';
 import OpenViduLayout from '../layout/openvidu-layout';
 import UserModel from '../models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
+import PropTypes from 'prop-types';
 
-var localUser = new UserModel();
+const localUser = new UserModel();
+const layout = new OpenViduLayout();
+let hasBeenUpdated = false;
 
 class VideoRoomComponent extends Component {
     constructor(props) {
         super(props);
-        //TODO remove the default props and use proptypes validation instead
-        this.OPENVIDU_SERVER_URL = this.props.openviduServerUrl
-            ? this.props.openviduServerUrl
-            : 'https://' + window.location.hostname + ':4443';
-        this.OPENVIDU_SERVER_SECRET = this.props.openviduSecret ? this.props.openviduSecret : 'MY_SECRET';
-        this.hasBeenUpdated = false;
-        this.layout = new OpenViduLayout();
-        let sessionName = this.props.sessionName ? this.props.sessionName : 'SessionA';
-        let userName = this.props.user ? this.props.user : 'OpenVidu_User' + Math.floor(Math.random() * 100);
-        //TODO add layout customization props and composition options for layout and functionality
+        let sessionName = this.props.sessionName;
+        let userName = this.props.user;
         this.state = {
             mySessionId: sessionName,
             myUserName: userName,
@@ -34,7 +28,6 @@ class VideoRoomComponent extends Component {
             chatDisplay: 'none',
         };
 
-        //TODO remove the default session handlers and move to proptypes
         this.joinSession = this.joinSession.bind(this);
         this.leaveSession = this.leaveSession.bind(this);
         this.onbeforeunload = this.onbeforeunload.bind(this);
@@ -52,20 +45,7 @@ class VideoRoomComponent extends Component {
     }
 
     componentDidMount() {
-        const openViduLayoutOptions = {
-            maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
-            minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
-            fixedRatio: false, // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
-            bigClass: 'OV_big', // The class to add to elements that should be sized bigger
-            bigPercentage: 0.8, // The maximum percentage of space the big ones should take up
-            bigFixedRatio: false, // fixedRatio for the big ones
-            bigMaxRatio: 3 / 2, // The narrowest ratio to use for the big elements (default 2x3)
-            bigMinRatio: 9 / 16, // The widest ratio to use for the big elements (default 16x9)
-            bigFirst: true, // Whether to place the big one in the top left (true) or bottom right
-            animate: true, // Whether you want to animate the transitions
-        };
-
-        this.layout.initLayoutContainer(document.getElementById('layout'), openViduLayoutOptions);
+        layout.initLayoutContainer(document.getElementById('layout'), this.props.layoutOptions);
         window.addEventListener('beforeunload', this.onbeforeunload);
         window.addEventListener('resize', this.updateLayout);
         window.addEventListener('resize', this.checkSize);
@@ -79,71 +59,47 @@ class VideoRoomComponent extends Component {
         this.leaveSession();
     }
 
-    onbeforeunload(event) {
+    onbeforeunload() {
         this.leaveSession();
     }
 
     joinSession() {
         this.OV = new OpenVidu();
-
         this.setState(
-            {
-                session: this.OV.initSession(),
-            },
-            () => {
-                this.subscribeToStreamCreated();
-
-                this.connectToSession();
-            },
+          {
+              session: this.OV.initSession(),
+          },
+          () => {
+              this.subscribeToStreamCreated();
+              this.connectToSession();
+          },
         );
     }
 
     connectToSession() {
-        if (this.props.token !== undefined) {
-            console.log('token received: ', this.props.token);
-            this.connect(this.props.token);
-        } else {
-            this.getToken().then((token) => {
-                console.log(token);
-                this.connect(token);
-            }).catch((error) => {
-                if(this.props.error){
-                    this.props.error({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-                }
-                console.log('There was an error getting the token:', error.code, error.message);
-                alert('There was an error getting the token:', error.message);
-              });
-        }
+        console.log('token received: ', this.props.token);
+        this.connect(this.props.token);
     }
 
     connect(token) {
         this.state.session
-            .connect(
-                token,
-                { clientData: this.state.myUserName },
-            )
-            .then(() => {
-                this.connectWebCam();
-            })
-            .catch((error) => {
-                if(this.props.error){
-                    this.props.error({ error: error.error, messgae: error.message, code: error.code, status: error.status });
-                }
-                alert('There was an error connecting to the session:', error.message);
-                console.log('There was an error connecting to the session:', error.code, error.message);
-            });
+          .connect(
+            token,
+            { clientData: this.state.myUserName },
+          )
+          .then(() => {
+              this.connectWebCam();
+          })
+          .catch((error) => {
+              if(this.props.error){
+                  this.props.error({ error: error.error, message: error.message, code: error.code, status: error.status });
+              }
+              alert(`There was an error connecting to the session: ${error.message}`);
+          });
     }
 
     connectWebCam() {
-        let publisher = this.OV.initPublisher(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: localUser.isAudioActive(),
-            publishVideo: localUser.isVideoActive(),
-            resolution: '640x480',
-            frameRate: 30,
-            insertMode: 'APPEND',
-        });
+        let publisher = this.OV.initPublisher(undefined, this.props.publishOptions);
 
         if (this.state.session.capabilities.publish) {
             this.state.session.publish(publisher).then(() => {
@@ -161,7 +117,7 @@ class VideoRoomComponent extends Component {
         this.sendSignalUserChanged({ isScreenShareActive: localUser.isScreenShareActive() });
 
         this.setState({ localUser: localUser }, () => {
-            this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
+            this.state.localUser.getStreamManager().on('streamPlaying', () => {
                 this.updateLayout();
                 publisher.videos[0].video.parentElement.classList.remove('custom-class');
             });
@@ -188,6 +144,7 @@ class VideoRoomComponent extends Component {
             this.props.leaveSession();
         }
     }
+
     camStatusChanged() {
         localUser.setVideoActive(!localUser.isVideoActive());
         localUser.getStreamManager().publishVideo(localUser.isVideoActive());
@@ -224,8 +181,8 @@ class VideoRoomComponent extends Component {
     subscribeToStreamCreated() {
         this.state.session.on('streamCreated', (event) => {
             const subscriber = this.state.session.subscribe(event.stream, undefined);
-            var subscribers = this.state.subscribers;
-            subscriber.on('streamPlaying', (e) => {
+            let subscribers = this.state.subscribers;
+            subscriber.on('streamPlaying', () => {
                 this.checkSomeoneShareScreen();
                 subscriber.videos[0].video.parentElement.classList.remove('custom-class');
             });
@@ -237,20 +194,20 @@ class VideoRoomComponent extends Component {
             newUser.setNickname(JSON.parse(nickname).clientData);
             subscribers.push(newUser);
             this.setState(
-                {
-                    subscribers: subscribers,
-                },
-                () => {
-                    if (this.state.localUser) {
-                        this.sendSignalUserChanged({
-                            isAudioActive: this.state.localUser.isAudioActive(),
-                            isVideoActive: this.state.localUser.isVideoActive(),
-                            nickname: this.state.localUser.getNickname(),
-                            isScreenShareActive: this.state.localUser.isScreenShareActive(),
-                        });
-                    }
-                    this.updateLayout();
-                },
+              {
+                  subscribers: subscribers,
+              },
+              () => {
+                  if (this.state.localUser) {
+                      this.sendSignalUserChanged({
+                          isAudioActive: this.state.localUser.isAudioActive(),
+                          isVideoActive: this.state.localUser.isVideoActive(),
+                          nickname: this.state.localUser.getNickname(),
+                          isScreenShareActive: this.state.localUser.isScreenShareActive(),
+                      });
+                  }
+                  this.updateLayout();
+              },
             );
         });
     }
@@ -290,17 +247,17 @@ class VideoRoomComponent extends Component {
                 }
             });
             this.setState(
-                {
-                    subscribers: remoteUsers,
-                },
-                () => this.checkSomeoneShareScreen(),
+              {
+                  subscribers: remoteUsers,
+              },
+              () => this.checkSomeoneShareScreen(),
             );
         });
     }
 
     updateLayout() {
         setTimeout(() => {
-            this.layout.updateLayout();
+            layout.updateLayout();
         }, 20);
     }
 
@@ -316,10 +273,10 @@ class VideoRoomComponent extends Component {
         const document = window.document;
         const fs = document.getElementById('container');
         if (
-            !document.fullscreenElement &&
-            !document.mozFullScreenElement &&
-            !document.webkitFullscreenElement &&
-            !document.msFullscreenElement
+          !document.fullscreenElement &&
+          !document.mozFullScreenElement &&
+          !document.webkitFullscreenElement &&
+          !document.msFullscreenElement
         ) {
             if (fs.requestFullscreen) {
                 fs.requestFullscreen();
@@ -346,26 +303,25 @@ class VideoRoomComponent extends Component {
     screenShare() {
         const videoSource = navigator.userAgent.indexOf('Firefox') !== -1 ? 'window' : 'screen';
         const publisher = this.OV.initPublisher(
-            undefined,
-            {
-                videoSource: videoSource,
-                publishAudio: localUser.isAudioActive(),
-                publishVideo: localUser.isVideoActive(),
-                mirror: false,
-            },
-            (error) => {
-                if (error && error.name === 'SCREEN_EXTENSION_NOT_INSTALLED') {
-                    this.setState({ showExtensionDialog: true });
-                } else if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
-                    alert('Your browser does not support screen sharing');
-                } else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
-                    alert('You need to enable screen sharing extension');
-                } else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
-                    alert('You need to choose a window or application to share');
-                }
-            },
+          undefined,
+          {
+              videoSource: videoSource,
+              publishAudio: localUser.isAudioActive(),
+              publishVideo: localUser.isVideoActive(),
+              mirror: false,
+          },
+          (error) => {
+              if (error && error.name === 'SCREEN_EXTENSION_NOT_INSTALLED') {
+                  this.setState({ showExtensionDialog: true });
+              } else if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
+                  alert('Your browser does not support screen sharing');
+              } else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
+                  alert('You need to enable screen sharing extension');
+              } else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
+                  alert('You need to choose a window or application to share');
+              }
+          },
         );
-
         publisher.once('accessAllowed', () => {
             this.state.session.unpublish(localUser.getStreamManager());
             localUser.setStreamManager(publisher);
@@ -395,19 +351,11 @@ class VideoRoomComponent extends Component {
         let isScreenShared;
         // return true if at least one passes the test
         isScreenShared = this.state.subscribers.some((user) => user.isScreenShareActive()) || localUser.isScreenShareActive();
-        const openviduLayoutOptions = {
-            maxRatio: 3 / 2,
-            minRatio: 9 / 16,
+        const screenShareLayoutOptions = {
+            ...this.props.layoutOptions,
             fixedRatio: isScreenShared,
-            bigClass: 'OV_big',
-            bigPercentage: 0.8,
-            bigFixedRatio: false,
-            bigMaxRatio: 3 / 2,
-            bigMinRatio: 9 / 16,
-            bigFirst: true,
-            animate: true,
         };
-        this.layout.setLayoutOptions(openviduLayoutOptions);
+        layout.setLayoutOptions(screenShareLayoutOptions);
         this.updateLayout();
     }
 
@@ -426,142 +374,108 @@ class VideoRoomComponent extends Component {
         this.updateLayout();
     }
 
-    checkNotification(event) {
+    checkNotification() {
         this.setState({
             messageReceived: this.state.chatDisplay === 'none',
         });
     }
+
     checkSize() {
-        if (document.getElementById('layout').offsetWidth <= 700 && !this.hasBeenUpdated) {
+        if (document.getElementById('layout').offsetWidth <= 700 && !hasBeenUpdated) {
             this.toggleChat('none');
-            this.hasBeenUpdated = true;
+            hasBeenUpdated = true;
         }
-        if (document.getElementById('layout').offsetWidth > 700 && this.hasBeenUpdated) {
-            this.hasBeenUpdated = false;
+        if (document.getElementById('layout').offsetWidth > 700 && hasBeenUpdated) {
+            hasBeenUpdated = false;
         }
     }
 
     render() {
         const mySessionId = this.state.mySessionId;
         const localUser = this.state.localUser;
-        var chatDisplay = { display: this.state.chatDisplay };
+        let chatDisplay = { display: this.state.chatDisplay };
 
         return (
-            <div className="container" id="container">
-                <ToolbarComponent
-                    sessionId={mySessionId}
-                    user={localUser}
-                    showNotification={this.state.messageReceived}
-                    camStatusChanged={this.camStatusChanged}
-                    micStatusChanged={this.micStatusChanged}
-                    screenShare={this.screenShare}
-                    stopScreenShare={this.stopScreenShare}
-                    toggleFullscreen={this.toggleFullscreen}
-                    leaveSession={this.leaveSession}
-                    toggleChat={this.toggleChat}
-                />
+          <div className="container" id="container">
+              <ToolbarComponent
+                sessionId={mySessionId}
+                user={localUser}
+                showNotification={this.state.messageReceived}
+                camStatusChanged={this.camStatusChanged}
+                micStatusChanged={this.micStatusChanged}
+                screenShare={this.screenShare}
+                stopScreenShare={this.stopScreenShare}
+                toggleFullscreen={this.toggleFullscreen}
+                leaveSession={this.leaveSession}
+                toggleChat={this.toggleChat}
+              />
 
-                <DialogExtensionComponent showDialog={this.state.showExtensionDialog} cancelClicked={this.closeDialogExtension} />
+              <DialogExtensionComponent showDialog={this.state.showExtensionDialog} cancelClicked={this.closeDialogExtension} />
 
-                <div id="layout" className="bounds">
-                    {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-                        <div className="OT_root OT_publisher custom-class" id="localUser">
-                            <StreamComponent user={localUser} handleNickname={this.nicknameChanged} />
-                        </div>
-                    )}
-                    {this.state.subscribers.map((sub, i) => (
-                        <div key={i} className="OT_root OT_publisher custom-class" id="remoteUsers">
-                            <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} />
-                        </div>
-                    ))}
-                    {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-                        <div className="OT_root OT_publisher custom-class" style={chatDisplay}>
-                            <ChatComponent
-                                user={localUser}
-                                chatDisplay={this.state.chatDisplay}
-                                close={this.toggleChat}
-                                messageReceived={this.checkNotification}
-                            />
-                        </div>
-                    )}
-                </div>
-            </div>
+              <div id="layout" className="bounds">
+                  {localUser !== undefined && localUser.getStreamManager() !== undefined && (
+                    <div className="OT_root OT_publisher custom-class" id="localUser">
+                        <StreamComponent user={localUser} handleNickname={this.nicknameChanged} />
+                    </div>
+                  )}
+                  {this.state.subscribers.map((sub, i) => (
+                    <div key={i} className="OT_root OT_publisher custom-class" id="remoteUsers">
+                        <StreamComponent user={sub} streamId={sub.streamManager.stream.streamId} />
+                    </div>
+                  ))}
+                  {localUser !== undefined && localUser.getStreamManager() !== undefined && (
+                    <div className="OT_root OT_publisher custom-class" style={chatDisplay}>
+                        <ChatComponent
+                          user={localUser}
+                          chatDisplay={this.state.chatDisplay}
+                          close={this.toggleChat}
+                          messageReceived={this.checkNotification}
+                        />
+                    </div>
+                  )}
+              </div>
+          </div>
         );
     }
-
-    //TODO remove the server-side code
-    /**
-     * --------------------------
-     * SERVER-SIDE RESPONSIBILITY
-     * --------------------------
-     * These methods retrieve the mandatory user token from OpenVidu Server.
-     * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-     * the API REST, openvidu-java-client or openvidu-node-client):
-     *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
-     *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
-     *   3) The token must be consumed in Session.connect() method
-     */
-
-    getToken() {
-        return this.createSession(this.state.mySessionId).then((sessionId) => this.createToken(sessionId));
-    }
-
-    createSession(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({ customSessionId: sessionId });
-            axios
-                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('CREATE SESION', response);
-                    resolve(response.data.id);
-                })
-                .catch((response) => {
-                    var error = Object.assign({}, response);
-                    if (error.response && error.response.status === 409) {
-                        resolve(sessionId);
-                    } else {
-                        console.log(error);
-                        console.warn(
-                            'No connection to OpenVidu Server. This may be a certificate error at ' + this.OPENVIDU_SERVER_URL,
-                        );
-                        if (
-                            window.confirm(
-                                'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"\n\nClick OK to navigate and accept it. ' +
-                                    'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"',
-                            )
-                        ) {
-                            window.location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');
-                        }
-                    }
-                });
-        });
-    }
-
-    createToken(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({});
-            axios
-                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('TOKEN', response);
-                    resolve(response.data.token);
-                })
-                .catch((error) => reject(error));
-        });
-    }
 }
+
+VideoRoomComponent.propTypes = {
+    sessionName: PropTypes.string.isRequired,
+    user: PropTypes.string.isRequired,
+    token: PropTypes.string.isRequired,
+    leaveSession: PropTypes.func,
+    joinSession: PropTypes.func,
+    error: PropTypes.func,
+    layoutOptions: PropTypes.object,
+    publishOptions: PropTypes.object,
+    displayToolbar: PropTypes.bool,
+    disableChat: PropTypes.bool,
+    controls: PropTypes.object,
+}
+
+VideoRoomComponent.defaultProps = {
+    layoutOptions: {
+        maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
+        minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
+        fixedRatio: false, // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
+        bigClass: 'OV_big', // The class to add to elements that should be sized bigger
+        bigPercentage: 0.8, // The maximum percentage of space the big ones should take up
+        bigFixedRatio: false, // fixedRatio for the big ones
+        bigMaxRatio: 3 / 2, // The narrowest ratio to use for the big elements (default 2x3)
+        bigMinRatio: 9 / 16, // The widest ratio to use for the big elements (default 16x9)
+        bigFirst: true, // Whether to place the big one in the top left (true) or bottom right
+        animate: true, // Whether you want to animate the transitions
+    },
+    publishOptions: {
+        audioSource: undefined,
+        videoSource: undefined,
+        publishAudio: true,
+        publishVideo: true,
+        resolution: '640x480',
+        frameRate: 30,
+        insertMode: 'APPEND',
+    },
+    controls: {microphone: true, camera: true, screenShare: true, fullscreen: true, leave: true, chat: true}
+}
+
 export default VideoRoomComponent;

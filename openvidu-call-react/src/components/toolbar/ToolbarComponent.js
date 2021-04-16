@@ -1,126 +1,179 @@
-import React, { Component } from 'react';
+import React, {useState} from 'react';
 import './ToolbarComponent.css';
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-
 import Mic from '@material-ui/icons/Mic';
 import MicOff from '@material-ui/icons/MicOff';
 import Videocam from '@material-ui/icons/Videocam';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
-import PictureInPicture from '@material-ui/icons/PictureInPicture';
 import ScreenShare from '@material-ui/icons/ScreenShare';
 import StopScreenShare from '@material-ui/icons/StopScreenShare';
 import Tooltip from '@material-ui/core/Tooltip';
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
 import QuestionAnswer from '@material-ui/icons/QuestionAnswer';
-
 import IconButton from '@material-ui/core/IconButton';
+import PropTypes from 'prop-types';
 
-const logo = require('../../assets/images/openvidu_logo.png');
+const openViduLogo = require('../../assets/images/openvidu_logo.png');
 
-export default class ToolbarComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { fullscreen: false };
-        this.camStatusChanged = this.camStatusChanged.bind(this);
-        this.micStatusChanged = this.micStatusChanged.bind(this);
-        this.screenShare = this.screenShare.bind(this);
-        this.stopScreenShare = this.stopScreenShare.bind(this);
-        this.toggleFullscreen = this.toggleFullscreen.bind(this);
-        this.leaveSession = this.leaveSession.bind(this);
-        this.toggleChat = this.toggleChat.bind(this);
+function ToolbarComponent(props) {
+    const {sessionId, showNotification,
+      controls,
+      logo,
+      title,
+      hideLogo, hideTitle,
+    user: localUser,
+    micStatusChanged: micStatusChangedCallback,
+    camStatusChanged: camStatusChangedCallback,
+    screenShare: screenShareCallback,
+    stopScreenShare: stopScreenShareCallback,
+    toggleFullscreen: toggleFullscreenCallback,
+    leaveSession: leaveSessionCallback,
+    toggleChat: toggleChatCallback} = props;
+    const [fullscreen, setFullscreen] = useState(false);
+
+    const micStatusChanged = function () {
+        micStatusChangedCallback();
     }
 
-
-    micStatusChanged() {
-        this.props.micStatusChanged();
+    const camStatusChanged = function () {
+        camStatusChangedCallback();
     }
 
-    camStatusChanged() {
-        this.props.camStatusChanged();
+    const screenShare = function () {
+        screenShareCallback();
     }
 
-    screenShare() {
-        this.props.screenShare();
+    const stopScreenShare = function () {
+        stopScreenShareCallback();
     }
 
-    stopScreenShare() {
-        this.props.stopScreenShare();
+    const toggleFullscreen = function () {
+        setFullscreen(!fullscreen);
+        toggleFullscreenCallback();
     }
 
-    toggleFullscreen() {
-        this.setState({ fullscreen: !this.state.fullscreen });
-        this.props.toggleFullscreen();
+    const leaveSession = function () {
+        leaveSessionCallback();
     }
 
-    leaveSession() {
-        this.props.leaveSession();
+    const toggleChat = function () {
+        toggleChatCallback();
     }
 
-    toggleChat() {
-        this.props.toggleChat();
-    }
+    return (
+      <AppBar className="toolbar" id="header">
+          <Toolbar className="toolbar">
+              <div id="navSessionInfo">
+                  {!hideLogo && logo}
+                  {
+                      !hideTitle &&
+                      (!title ?
+                      (sessionId && <div id="titleContent">
+                      <span id="session-title">{sessionId}</span>
+                      </div>): null)
+                  }
+              </div>
 
-    render() {
-        const mySessionId = this.props.sessionId;
-        const localUser = this.props.user;
-        return (
-            <AppBar className="toolbar" id="header">
-                <Toolbar className="toolbar">
-                    <div id="navSessionInfo">
-                        <img
-                            id="header_img"
-                            alt="OpenVidu Logo"
-                            src={logo}
-                        />
+              <div className="buttonsContent">
 
-                        {this.props.sessionId && <div id="titleContent">
-                            <span id="session-title">{mySessionId}</span>
-                        </div>}
-                    </div>
+                  { controls.microphone &&
+                  <Tooltip title={localUser !== undefined && localUser.isAudioActive() ? 'Mute' : 'Unmute'}>
+                      <IconButton color="inherit" className="navButton" id="navMicButton" onClick={micStatusChanged}>
+                          {localUser !== undefined && localUser.isAudioActive() ? <Mic /> : <MicOff color="secondary" />}
+                      </IconButton>
+                  </Tooltip>
+                  }
 
-                    <div className="buttonsContent">
-                        <IconButton color="inherit" className="navButton" id="navMicButton" onClick={this.micStatusChanged}>
-                            {localUser !== undefined && localUser.isAudioActive() ? <Mic /> : <MicOff color="secondary" />}
-                        </IconButton>
+                  { controls.camera &&
+                  <Tooltip title={localUser !== undefined && localUser.isVideoActive() ? (
+                    'Close Video'
+                  ) : (
+                    'Open Video'
+                  )}>
+                      <IconButton color="inherit" className="navButton" id="navCamButton" onClick={camStatusChanged}>
+                          {localUser !== undefined && localUser.isVideoActive() ? (
+                            <Videocam />
+                          ) : (
+                            <VideocamOff color="secondary" />
+                          )}
+                      </IconButton>
+                  </Tooltip>
+                  }
 
-                        <IconButton color="inherit" className="navButton" id="navCamButton" onClick={this.camStatusChanged}>
-                            {localUser !== undefined && localUser.isVideoActive() ? (
-                                <Videocam />
-                            ) : (
-                                <VideocamOff color="secondary" />
-                            )}
-                        </IconButton>
+                  {controls.screenShare && (localUser !== undefined && localUser.isScreenShareActive() ? <Tooltip title={'Stop Screen Sharing'}>
+                      <IconButton onClick={stopScreenShare} id="navScreenButton">
+                          <StopScreenShare color="secondary" />
+                      </IconButton>
+                  </Tooltip> : <Tooltip title={'Share Screen'}>
+                      <IconButton color="inherit" className="navButton" onClick={screenShare}>
+                          <ScreenShare />
+                      </IconButton>
+                  </Tooltip>)
+                  }
 
-                        <IconButton color="inherit" className="navButton" onClick={this.screenShare}>
-                            {localUser !== undefined && localUser.isScreenShareActive() ? <PictureInPicture /> : <ScreenShare />}
-                        </IconButton>
 
-                        {localUser !== undefined &&
-                            localUser.isScreenShareActive() && (
-                                <IconButton onClick={this.stopScreenShare} id="navScreenButton">
-                                    <StopScreenShare color="secondary" />
-                                </IconButton>
-                            )}
 
-                        <IconButton color="inherit" className="navButton" onClick={this.toggleFullscreen}>
-                            {localUser !== undefined && this.state.fullscreen ? <FullscreenExit /> : <Fullscreen />}
-                        </IconButton>
-                        <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
-                            <PowerSettingsNew />
-                        </IconButton>
-                         <IconButton color="inherit" onClick={this.toggleChat} id="navChatButton">
-                            {this.props.showNotification && <div id="point" className="" />}
-                            <Tooltip title="Chat">
-                                <QuestionAnswer />
-                            </Tooltip>
-                        </IconButton>
-                    </div>
-                </Toolbar>
-            </AppBar>
-        );
-    }
+                  {controls.fullscreen &&
+                  <Tooltip title={localUser !== undefined && fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}>
+                      <IconButton color="inherit" className="navButton" onClick={toggleFullscreen}>
+                          {localUser !== undefined && fullscreen ? <FullscreenExit /> : <Fullscreen />}
+                      </IconButton>
+                  </Tooltip>
+                  }
+
+
+                  { controls.leave &&
+                      <Tooltip title={'Leave Session'}>
+                          <IconButton color="secondary" className="navButton" onClick={leaveSession} id="navLeaveButton">
+                              <PowerSettingsNew />
+                          </IconButton>
+                      </Tooltip>
+                  }
+
+                  {controls.chat && <Tooltip  title="Chat">
+                      <IconButton color="inherit" onClick={toggleChat} id="navChatButton">
+                          {showNotification && <div id="point" className="" />}
+                          <QuestionAnswer />
+                      </IconButton>
+                  </Tooltip>
+                  }
+              </div>
+          </Toolbar>
+      </AppBar>
+    );
 }
+
+ToolbarComponent.propTypes = {
+    sessionId: PropTypes.string.isRequired,
+    user: PropTypes.object.isRequired,
+    controls: PropTypes.object,
+    hideLogo: PropTypes.bool,
+    hideTitle: PropTypes.bool,
+    logo: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.elementType]),
+    title: PropTypes.oneOfType([PropTypes.node, PropTypes.element, PropTypes.elementType]),
+    showNotification: PropTypes.func,
+    micStatusChanged: PropTypes.func,
+    camStatusChanged: PropTypes.func,
+    screenShare: PropTypes.func,
+    stopScreenShare: PropTypes.func,
+    toggleFullscreen: PropTypes.func,
+    leaveSession: PropTypes.func,
+    toggleChat: PropTypes.func,
+}
+
+ToolbarComponent.defaultProps = {
+    controls: {microphone: true, camera: true, screenShare: true, fullscreen: true, leave: true, chat: true},
+    logo: <img
+      id="header_img"
+      alt="OpenVidu Logo"
+      src={openViduLogo}
+    />,
+    hideLogo: false,
+    hideTitle: false,
+    showNotification: true,
+}
+
+export default ToolbarComponent;

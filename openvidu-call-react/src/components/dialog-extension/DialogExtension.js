@@ -1,74 +1,65 @@
-import React, { Component } from 'react';
+import React, {useState} from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import PropTypes from 'prop-types';
 import './DialogExtension.css';
 
-export default class DialogExtensionComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.openviduExtensionUrl =
-            'https://chrome.google.com/webstore/detail/openvidu-screensharing/lfcgfepafnobdloecchnfaclibenjold';
-        //isInstalled: boolean;
+const openViduExtensionUrl = 'https://chrome.google.com/webstore/detail/openvidu-screensharing/lfcgfepafnobdloecchnfaclibenjold';
 
-        this.state = {
-            isInstalled: false,
-        };
-        this.goToChromePage = this.goToChromePage.bind(this);
-        this.onNoClick = this.onNoClick.bind(this);
-        this.refreshBrowser = this.refreshBrowser.bind(this);
+function DialogExtensionComponent(props) {
+    const {cancelClicked, showDialog} = props;
+    const [isInstalled, setIsInstalled] = useState(false);
+
+    const onNoClick = function () {
+        cancelClicked();
     }
 
-    componentWillReceiveProps(props) {}
-
-    componentDidMount() {}
-
-    onNoClick() {
-        // this.cancel.emit();
-        this.props.cancelClicked();
+    const goToChromePage = function () {
+        window.open(openViduExtensionUrl);
+        setIsInstalled(true);
     }
 
-    goToChromePage() {
-        window.open(this.openviduExtensionUrl);
-        this.setState({ isInstalled: true });
-    }
-
-    refreshBrowser() {
+    const refreshBrowser = function () {
         window.location.reload();
     }
 
-    render() {
-        return (
-            <div>
-                {this.props && this.props.showDialog ? (
-                    <div id="dialogExtension">
-                        <Card id="card">
-                            <CardContent>
-                                <Typography color="textSecondary">Hello</Typography>
-                                <Typography color="textSecondary">
-                                    You need install this chrome extension and refresh the browser for can share your screen.
-                                </Typography>
-                            </CardContent>
-                            <CardActions>
-                                <Button size="small" onClick={this.onNoClick}>
-                                    Cancel
+    return (
+        <div>
+            {showDialog ? (
+                <div id="dialogExtension">
+                    <Card id="card">
+                        <CardContent>
+                            <Typography color="textSecondary">Hello</Typography>
+                            <Typography color="textSecondary">
+                                You need install this chrome extension and refresh the browser for can share your screen.
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small" onClick={onNoClick}>
+                                Cancel
+                            </Button>
+                            <Button size="small" onClick={goToChromePage}>
+                                Install
+                            </Button>
+                            {isInstalled ? (
+                                <Button size="small" onClick={refreshBrowser}>
+                                    Refresh
                                 </Button>
-
-                                <Button size="small" onClick={this.goToChromePage}>
-                                    Install
-                                </Button>
-                                {this.state.isInstalled ? (
-                                    <Button size="small" onClick={this.refreshBrowser}>
-                                        Refresh
-                                    </Button>
-                                ) : null}
-                            </CardActions>
-                        </Card>
-                    </div>
-                ) : null}
-            </div>
-        );
-    }
+                            ) : null}
+                        </CardActions>
+                    </Card>
+                </div>
+            ) : null}
+        </div>
+    );
 }
+
+DialogExtensionComponent.PropTypes = {
+    cancelClicked: PropTypes.func,
+    showDialog: PropTypes.bool,
+}
+
+export default DialogExtensionComponent;

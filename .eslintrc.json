@@ -1,0 +1,25 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "shared-node-browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "sourceType": "module",
+    "ecmaVersion": 12
+  },
+  "extends": ["eslint:recommended", "prettier", "react-app",
+    "plugin:react/recommended", "plugin:react-hooks/recommended"],
+  "plugins": ["react", "prettier", "react-hooks"],
+  "reportUnusedDisableDirectives": true,
+  "rules": {
+    "prettier/prettier": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}

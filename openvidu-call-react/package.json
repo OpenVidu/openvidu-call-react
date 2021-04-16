@@ -1,10 +1,48 @@
 {
-    "browserslist": [
-        ">0.2%",
-        "not dead",
-        "not ie <= 11",
-        "not op_mini all"
-    ],
+    "name": "openvidu-call-react",
+    "version": "2.17.0",
+    "private": true,
+    "scripts": {
+        "start": "react-scripts start",
+        "test": "react-scripts test --env=jsdom",
+        "build": "react-scripts build",
+        "build:openvidu-react": "npm install --prefix ../library/ && node library-copy.js && cd ../library && npm run create-library",
+        "eject": "react-scripts eject"
+    },
+    "stylelint": {
+        "extends": "stylelint-config-standard"
+    },
+    "lint-staged": {
+        "*/src/**/*.{js,jsx,ts,tsx,scss,md}": [
+            "eslint --fix",
+            "prettier --write"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not ie <= 11",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version"
+        ]
+    },
+    "engines": {
+        "node": ">= 10",
+        "yarn": ">= 1.9"
+    },
+    "devEngines": {
+        "node": ">=10.x",
+        "npm": ">=6.x",
+        "yarn": ">=1.21.3"
+    },
     "dependencies": {
         "@material-ui/core": "4.9.10",
         "@material-ui/icons": "4.9.1",
@@ -13,16 +51,18 @@
         "openvidu-browser": "2.17.0",
         "react": "16.13.1",
         "react-dom": "16.13.1",
-        "react-scripts": "^3.4.3"
+        "react-scripts": "^3.4.3",
+        "prop-types": "^15.7.2"
     },
-    "name": "openvidu-call-react",
-    "private": true,
-    "scripts": {
-        "build": "react-scripts build",
-        "build:openvidu-react": "npm install --prefix ../library/ && node library-copy.js && cd ../library && npm run create-library",
-        "eject": "react-scripts eject",
-        "start": "react-scripts start",
-        "test": "react-scripts test --env=jsdom"
-    },
-    "version": "2.17.0"
+    "devDependencies": {
+        "eslint-config-prettier": "^7.2.0",
+        "eslint-plugin-prettier": "^3.3.1",
+        "prettier": "^2.2.1",
+        "jsonlint": "^1.6.3",
+        "stylelint": "^13.11.0",
+        "htmlhint": "^0.14.2",
+        "lint-staged": "^10.5.4",
+        "rimraf": "^3.0.2",
+        "husky": "^4.3.8"
+    }
 }
