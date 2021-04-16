@@ -3,8 +3,7 @@
     "browser": true,
     "node": true,
     "shared-node-browser": true,
-    "commonjs": true,
-    "es2021": true
+    "commonjs": true
   },
   "parserOptions": {
     "ecmaFeatures": {
@@ -14,7 +13,7 @@
     "ecmaVersion": 12
   },
   "extends": ["eslint:recommended", "prettier", "react-app",
-    "plugin:react/recommended", "plugin:react-hooks/recommended"],
+    "plugin:react/recommended"],
   "plugins": ["react", "prettier", "react-hooks"],
   "reportUnusedDisableDirectives": true,
   "rules": {

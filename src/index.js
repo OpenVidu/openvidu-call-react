@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import './index.css';
 import VideoRoomComponent from './components/VideoRoomComponent';
-import registerServiceWorker from './registerServiceWorker';
 
 function Index() {
   const OPENVIDU_SERVER_URL = 'https://' + window.location.hostname + ':4443';
@@ -18,7 +17,7 @@ function Index() {
       console.log(`Got token as ${result}`);
       setToken(result);
     })();
-  }, [])
+  }, []);
 
   /**
    * --------------------------
@@ -35,61 +34,75 @@ function Index() {
   const getToken = async function () {
     const sessionId = await createSession(sessionName);
     return await createToken(sessionId);
-  }
+  };
 
   const createSession = async function (sessionId) {
     try {
-      var data = JSON.stringify({ customSessionId: sessionId });
-      const response = await axios.post(OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
-        headers: {
-          Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-          'Content-Type': 'application/json',
-        },
-      })
+      let data = JSON.stringify({ customSessionId: sessionId });
+      const response = await axios.post(
+        OPENVIDU_SERVER_URL + '/openvidu/api/sessions',
+        data,
+        {
+          headers: {
+            Authorization:
+              'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       console.log('CREATE SESSION', response);
       return response.data.id;
     } catch (response) {
-      var error = Object.assign({}, response);
+      let error = Object.assign({}, response);
       if (error.response && error.response.status === 409) {
         return sessionId;
       } else {
         console.log(error);
         console.warn(
-          'No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL,
+          'No connection to OpenVidu Server. This may be a certificate error at ' +
+            OPENVIDU_SERVER_URL
         );
         if (
           window.confirm(
             'No connection to OpenVidu Server. This may be a certificate error at "' +
-            OPENVIDU_SERVER_URL +
-            '"\n\nClick OK to navigate and accept it. ' +
-            'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-            OPENVIDU_SERVER_URL +
-            '"',
+              OPENVIDU_SERVER_URL +
+              '"\n\nClick OK to navigate and accept it. ' +
+              'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
+              OPENVIDU_SERVER_URL +
+              '"'
           )
         ) {
           window.location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
         }
       }
     }
-  }
+  };
 
   const createToken = async function (sessionId) {
     try {
-      var data = JSON.stringify({});
-      const response = await axios.post(OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
-        headers: {
-          Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-          'Content-Type': 'application/json',
-        },
-      })
+      let data = JSON.stringify({});
+      const response = await axios.post(
+        OPENVIDU_SERVER_URL +
+          '/openvidu/api/sessions/' +
+          sessionId +
+          '/connection',
+        data,
+        {
+          headers: {
+            Authorization:
+              'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       console.log('TOKEN', response);
       return response.data.token;
     } catch (error) {
-      console.error(`Error retrieving session token with REST API ${error}`)
+      console.error(`Error retrieving session token with REST API ${error}`);
     }
-  }
+  };
 
-  return(
+  return (
     <div>
       {!token ? null : (
         <VideoRoomComponent
@@ -99,10 +112,7 @@ function Index() {
         />
       )}
     </div>
-  )
+  );
 }
 
-ReactDOM.render(
-  <Index/>, document.getElementById('root')
-);
-registerServiceWorker();
+ReactDOM.render(<Index />, document.getElementById('root'));

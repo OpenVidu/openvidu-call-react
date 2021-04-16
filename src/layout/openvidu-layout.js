@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 class OpenViduLayout {
   layoutContainer;
-  opts ;
+  opts;
 
   fixAspectRatio(elem, width) {
     const sub = elem.querySelector('.OT_root');
@@ -17,7 +17,7 @@ class OpenViduLayout {
     }
   }
 
- positionElement(elem, x, y, width, height, animate) {
+  positionElement(elem, x, y, width, height, animate) {
     const targetPosition = {
       left: x + 'px',
       top: y + 'px',
@@ -29,12 +29,17 @@ class OpenViduLayout {
 
     if (animate && $) {
       $(elem).stop();
-      $(elem).animate(targetPosition, animate.duration || 200, animate.easing || 'swing', () => {
-        this.fixAspectRatio(elem, width);
-        if (animate.complete) {
-          animate.complete.call(this);
+      $(elem).animate(
+        targetPosition,
+        animate.duration || 200,
+        animate.easing || 'swing',
+        () => {
+          this.fixAspectRatio(elem, width);
+          if (animate.complete) {
+            animate.complete.call(this);
+          }
         }
-      });
+      );
     } else {
       $(elem).css(targetPosition);
     }
@@ -54,27 +59,27 @@ class OpenViduLayout {
     return 3 / 4;
   }
 
-   getCSSNumber(elem, prop) {
+  getCSSNumber(elem, prop) {
     const cssStr = $(elem).css(prop);
     return cssStr ? parseInt(cssStr, 10) : 0;
   }
 
   // Really cheap UUID function
-   cheapUUID() {
+  cheapUUID() {
     return (Math.random() * 100000000).toFixed(0);
   }
 
-   getHeight(elem) {
+  getHeight(elem) {
     const heightStr = $(elem).css('height');
     return heightStr ? parseInt(heightStr, 10) : 0;
   }
 
-   getWidth(elem) {
+  getWidth(elem) {
     const widthStr = $(elem).css('width');
     return widthStr ? parseInt(widthStr, 10) : 0;
   }
 
-   getBestDimensions(minR , maxR , count , WIDTH, HEIGHT, targetHeight) {
+  getBestDimensions(minR, maxR, count, WIDTH, HEIGHT, targetHeight) {
     let maxArea, targetCols, targetRows, targetWidth, tWidth, tHeight, tRatio;
 
     // Iterate through every possible combination of rows and columns
@@ -119,7 +124,7 @@ class OpenViduLayout {
     };
   }
 
-   arrange(
+  arrange(
     children,
     WIDTH,
     HEIGHT,
@@ -128,7 +133,7 @@ class OpenViduLayout {
     fixedRatio,
     minRatio,
     maxRatio,
-    animate,
+    animate
   ) {
     let targetHeight;
 
@@ -136,11 +141,27 @@ class OpenViduLayout {
     let dimensions;
 
     if (!fixedRatio) {
-      dimensions = this.getBestDimensions(minRatio, maxRatio, count, WIDTH, HEIGHT, targetHeight);
+      dimensions = this.getBestDimensions(
+        minRatio,
+        maxRatio,
+        count,
+        WIDTH,
+        HEIGHT,
+        targetHeight
+      );
     } else {
       // Use the ratio of the first video element we find to approximate
-      const ratio = this.getVideoRatio(children.length > 0 ? children[0] : null);
-      dimensions = this.getBestDimensions(ratio, ratio, count, WIDTH, HEIGHT, targetHeight);
+      const ratio = this.getVideoRatio(
+        children.length > 0 ? children[0] : null
+      );
+      dimensions = this.getBestDimensions(
+        ratio,
+        ratio,
+        count,
+        WIDTH,
+        HEIGHT,
+        targetHeight
+      );
     }
 
     // Loop through each stream in the container and place it inside
@@ -197,9 +218,11 @@ class OpenViduLayout {
           let extraHeight = remainingHeightDiff / remainingShortRows;
           if (extraHeight / row.height > (WIDTH - row.width) / row.width) {
             // We can't go that big or we'll go too wide
-            extraHeight = Math.floor((WIDTH - row.width) / row.width * row.height);
+            extraHeight = Math.floor(
+              ((WIDTH - row.width) / row.width) * row.height
+            );
           }
-          row.width += Math.floor(extraHeight / row.height * row.width);
+          row.width += Math.floor((extraHeight / row.height) * row.width);
           row.height += extraHeight;
           remainingHeightDiff -= extraHeight;
           remainingShortRows -= 1;
@@ -244,14 +267,21 @@ class OpenViduLayout {
           this.getCSSNumber(elem, 'borderTop') -
           this.getCSSNumber(elem, 'borderBottom');
 
-        this.positionElement(elem, x + offsetLeft, y + offsetTop, actualWidth, actualHeight, animate);
+        this.positionElement(
+          elem,
+          x + offsetLeft,
+          y + offsetTop,
+          actualWidth,
+          actualHeight,
+          animate
+        );
         x += targetWidth;
       }
       y += targetHeight;
     }
   }
 
- filterDisplayNone(element) {
+  filterDisplayNone(element) {
     return element.style.display !== 'none';
   }
 
@@ -282,12 +312,16 @@ class OpenViduLayout {
     let bigOffsetLeft = 0;
 
     const bigOnes = Array.prototype.filter.call(
-      this.layoutContainer.querySelectorAll('#' + id + '>.' + this.opts.bigClass),
-      this.filterDisplayNone,
+      this.layoutContainer.querySelectorAll(
+        '#' + id + '>.' + this.opts.bigClass
+      ),
+      this.filterDisplayNone
     );
     const smallOnes = Array.prototype.filter.call(
-      this.layoutContainer.querySelectorAll('#' + id + '>*:not(.' + this.opts.bigClass + ')'),
-      this.filterDisplayNone,
+      this.layoutContainer.querySelectorAll(
+        '#' + id + '>*:not(.' + this.opts.bigClass + ')'
+      ),
+      this.filterDisplayNone
     );
 
     if (bigOnes.length > 0 && smallOnes.length > 0) {
@@ -318,7 +352,7 @@ class OpenViduLayout {
           this.opts.bigFixedRatio,
           this.opts.bigMinRatio,
           this.opts.bigMaxRatio,
-          this.opts.animate,
+          this.opts.animate
         );
         this.arrange(
           smallOnes,
@@ -329,7 +363,7 @@ class OpenViduLayout {
           this.opts.fixedRatio,
           this.opts.minRatio,
           this.opts.maxRatio,
-          this.opts.animate,
+          this.opts.animate
         );
       } else {
         this.arrange(
@@ -341,7 +375,7 @@ class OpenViduLayout {
           this.opts.fixedRatio,
           this.opts.minRatio,
           this.opts.maxRatio,
-          this.opts.animate,
+          this.opts.animate
         );
         this.arrange(
           bigOnes,
@@ -352,7 +386,7 @@ class OpenViduLayout {
           this.opts.bigFixedRatio,
           this.opts.bigMinRatio,
           this.opts.bigMaxRatio,
-          this.opts.animate,
+          this.opts.animate
         );
       }
     } else if (bigOnes.length > 0 && smallOnes.length === 0) {
@@ -367,7 +401,7 @@ class OpenViduLayout {
           this.opts.bigFixedRatio,
           this.opts.bigMinRatio,
           this.opts.bigMaxRatio,
-          this.opts.animate,
+          this.opts.animate
         );
     } else {
       this.arrange(
@@ -379,7 +413,7 @@ class OpenViduLayout {
         this.opts.fixedRatio,
         this.opts.minRatio,
         this.opts.maxRatio,
-        this.opts.animate,
+        this.opts.animate
       );
     }
   }
@@ -397,7 +431,8 @@ class OpenViduLayout {
       bigMinRatio: opts.bigMinRatio != null ? opts.bigMinRatio : 9 / 16,
       bigFirst: opts.bigFirst != null ? opts.bigFirst : true,
     };
-    this.layoutContainer = typeof container === 'string' ? $(container) : container;
+    this.layoutContainer =
+      typeof container === 'string' ? $(container) : container;
   }
 
   setLayoutOptions(options) {

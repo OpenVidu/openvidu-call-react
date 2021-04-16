@@ -1,4 +1,4 @@
 import VideoRoomComponent from './components/VideoRoomComponent';
-import 'typeface-roboto'
+import 'typeface-roboto';
 
 export default VideoRoomComponent;
