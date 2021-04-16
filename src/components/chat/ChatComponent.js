@@ -143,7 +143,7 @@ ChatComponent.propTyepes = {
   user: PropTypes.object.isRequired,
   chatDisplay: PropTypes.bool.isRequired,
   close: PropTypes.func,
-  messageReceivedCallback: PropTypes.func,
+  messageReceived: PropTypes.func,
 };
 
 export default ChatComponent;

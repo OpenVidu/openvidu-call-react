@@ -10,11 +10,11 @@
   min-width: 400px !important;
 }
 
-.toolbar{
+.toolbar {
   padding: 0 !important;
 }
 
-.headerLight{
+.headerLight {
   color: #706969 !important;
   background-color: #eeeeee !important;
 }
@@ -36,7 +36,7 @@
   top: 0;
 }
 
-#titleContent{
+#titleContent {
   max-width: 100px;
   background-color: #494949;
   margin: 5px -18px;
@@ -48,7 +48,7 @@
   margin-top: 20px;
 }
 
-.titleContentLight{
+.titleContentLight {
   background-color: #dfdfdf !important;
   color: #000;
 }
@@ -59,11 +59,11 @@
   margin-top: 10px;
 }
 
-#session-title{
+#session-title {
   font-family: 'Open Sans', sans-serif;
 }
 
-#point{
+#point {
   width: 10px;
   height: 10px;
   position: absolute;
@@ -74,12 +74,13 @@
   border: 1px solid #000;
   z-index: 99999;
 }
-.pointLight{
+.pointLight {
   border: 1px solid #ffffff !important;
 }
 
 @media only screen and (max-width: 700px) {
-  #titleContent, #navChatButton {
+  #titleContent,
+  #navChatButton {
     display: none;
   }
 }

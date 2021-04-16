@@ -12,13 +12,18 @@
     "sourceType": "module",
     "ecmaVersion": 12
   },
-  "extends": ["eslint:recommended", "prettier", "react-app",
-    "plugin:react/recommended"],
-  "plugins": ["react", "prettier", "react-hooks"],
+  "extends": [
+    "eslint:recommended",
+    "prettier",
+    "react-app",
+    "plugin:react/recommended"
+  ],
+  "plugins": ["react", "only-warn", "prettier", "react-hooks"],
   "reportUnusedDisableDirectives": true,
   "rules": {
-    "prettier/prettier": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "prettier/prettier": "warn",
+    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/prop-types": "warn"
   }
 }
