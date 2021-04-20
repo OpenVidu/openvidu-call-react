@@ -3,7 +3,7 @@ import './StreamComponent.css';
 import PropTypes from 'prop-types';
 
 function OvVideoComponent(props) {
-  const { user, mutedSound } = props;
+  const { user, muted } = props;
   const videoRef = useRef();
 
   useEffect(() => {
@@ -33,18 +33,18 @@ function OvVideoComponent(props) {
       autoPlay={true}
       id={'video-' + user.getStreamManager().stream.streamId}
       ref={videoRef}
-      muted={mutedSound}
+      muted={muted}
     />
   );
 }
 
 OvVideoComponent.propTypes = {
   user: PropTypes.object.isRequired,
-  mutedSound: PropTypes.bool,
+  muted: PropTypes.bool,
 };
 
 OvVideoComponent.defaultProps = {
-  mutedSound: true,
+  muted: true,
 };
 
 export default OvVideoComponent;

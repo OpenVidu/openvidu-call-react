@@ -4,13 +4,12 @@
 [![Support badge](https://img.shields.io/badge/support-sof-yellowgreen.svg)](https://openvidu.discourse.group/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-[![][OpenViduLogo]](http://openvidu.io)
+[![][openvidulogo]](http://openvidu.io)
 
-openvidu-call-react
-===
+# openvidu-call-react
+
 You can see the documentation [here](https://docs.openvidu.io/en/stable/demos/openvidu-call-react/)
 
 See demo at [openvidu.io/demos](http://openvidu.io/demos#2)
 
-
-[OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
+[openvidulogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

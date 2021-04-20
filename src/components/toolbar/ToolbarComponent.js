@@ -207,7 +207,7 @@ function ToolbarComponent(props) {
 
 ToolbarComponent.propTypes = {
   sessionId: PropTypes.string.isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   controls: PropTypes.object,
   hideLogo: PropTypes.bool,
   hideTitle: PropTypes.bool,
