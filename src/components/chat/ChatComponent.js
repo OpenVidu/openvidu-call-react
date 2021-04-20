@@ -6,6 +6,7 @@ import HighlightOff from '@material-ui/icons/HighlightOff';
 import Send from '@material-ui/icons/Send';
 import { Tooltip } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import { Chat } from '@material-ui/icons';
 
 function ChatComponent(props) {
   const {
@@ -141,9 +142,13 @@ function ChatComponent(props) {
 
 ChatComponent.propTyepes = {
   user: PropTypes.object.isRequired,
-  chatDisplay: PropTypes.bool.isRequired,
+  chatDisplay: PropTypes.string.isRequired,
   close: PropTypes.func,
   messageReceived: PropTypes.func,
+};
+
+ChatComponent.defaultProps = {
+  chatDisplay: 'none',
 };
 
 export default ChatComponent;

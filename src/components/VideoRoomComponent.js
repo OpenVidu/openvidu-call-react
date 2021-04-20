@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './VideoRoomComponent.css';
 import { OpenVidu } from 'openvidu-browser';
 import StreamComponent from './stream/StreamComponent';
-import DialogExtensionComponent from './dialog-extension/DialogExtension';
 import ChatComponent from './chat/ChatComponent';
 
 import OpenViduLayout from '../layout/openvidu-layout';
@@ -38,7 +37,6 @@ class VideoRoomComponent extends Component {
     this.toggleFullscreen = this.toggleFullscreen.bind(this);
     this.screenShare = this.screenShare.bind(this);
     this.stopScreenShare = this.stopScreenShare.bind(this);
-    this.closeDialogExtension = this.closeDialogExtension.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
     this.checkSize = this.checkSize.bind(this);
@@ -327,12 +325,8 @@ class VideoRoomComponent extends Component {
         mirror: false,
       },
       (error) => {
-        if (error && error.name === 'SCREEN_EXTENSION_NOT_INSTALLED') {
-          this.setState({ showExtensionDialog: true });
-        } else if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
+        if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
           alert('Your browser does not support screen sharing');
-        } else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
-          alert('You need to enable screen sharing extension');
         } else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
           alert('You need to choose a window or application to share');
         }
@@ -354,10 +348,6 @@ class VideoRoomComponent extends Component {
       this.updateLayout();
       publisher.videos[0].video.parentElement.classList.remove('custom-class');
     });
-  }
-
-  closeDialogExtension() {
-    this.setState({ showExtensionDialog: false });
   }
 
   stopScreenShare() {
@@ -431,11 +421,6 @@ class VideoRoomComponent extends Component {
           toggleFullscreen={this.toggleFullscreen}
           leaveSession={this.leaveSession}
           toggleChat={this.toggleChat}
-        />
-
-        <DialogExtensionComponent
-          showDialog={this.state.showExtensionDialog}
-          cancelClicked={this.closeDialogExtension}
         />
 
         <div id="layout" className="bounds">

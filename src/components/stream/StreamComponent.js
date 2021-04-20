@@ -15,13 +15,13 @@ import PropTypes from 'prop-types';
 import OvVideoComponent from './OvVideo';
 
 function StreamComponent(props) {
-  const { user, allowNicknameEdit, handleNickname } = props;
+  const { user, showNickname, allowNicknameEdit, handleNickname } = props;
   const [nickname, setNickname] = useState(user.getNickname());
   const [showForm, setShowForm] = useState(false);
-  const [mutedSound, setMutedSound] = useState(false);
+  const [muted, setMuted] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
 
-  const handleChange = function (event) {
+  const handleNicknameChange = function (event) {
     setNickname(event.target.value);
     event.preventDefault();
   };
@@ -33,10 +33,10 @@ function StreamComponent(props) {
   };
 
   const toggleSound = function () {
-    setMutedSound(!mutedSound);
+    setMuted(!muted);
   };
 
-  const handlePressKey = function (event) {
+  const handleNicknameSubmit = function (event) {
     if (event.key === 'Enter') {
       console.log(nickname);
       if (nickname.length >= 3 && nickname.length <= 20) {
@@ -44,51 +44,58 @@ function StreamComponent(props) {
         toggleNicknameForm();
         setIsFormValid(true);
       } else {
-        this.setState({ isFormValid: false });
+        setIsFormValid(false);
       }
     }
   };
 
   return (
     <div className="OT_widget-container">
-      <div className="pointer nickname">
-        {showForm ? (
-          <FormControl id="nicknameForm">
-            <IconButton id="closeButton" onClick={toggleNicknameForm}>
-              <HighlightOff />
-            </IconButton>
-            <InputLabel htmlFor="name-simple" id="label">
-              Nickname
-            </InputLabel>
-            <Input
-              id="input"
-              value={nickname}
-              onChange={handleChange}
-              onKeyPress={handlePressKey}
-              required
-            />
-            {!isFormValid && nickname.length <= 3 && (
-              <FormHelperText id="name-error-text">
-                Nickname is too short!
-              </FormHelperText>
-            )}
-            {!isFormValid && nickname.length >= 20 && (
-              <FormHelperText id="name-error-text">
-                Nickname is too long!
-              </FormHelperText>
-            )}
-          </FormControl>
-        ) : (
-          <div onClick={allowNicknameEdit && toggleNicknameForm}>
-            <span id="nickname">{nickname}</span>
-            {user.isLocal() && allowNicknameEdit && <span id=""> (edit)</span>}
-          </div>
-        )}
-      </div>
+      {showNickname && (
+        <div className="pointer nickname">
+          {/*Show form to edit nickname when it's clicked*/}
+          {showForm ? (
+            <FormControl id="nicknameForm">
+              <IconButton id="closeButton" onClick={toggleNicknameForm}>
+                <HighlightOff />
+              </IconButton>
+              <InputLabel htmlFor="name-simple" id="label">
+                Nickname
+              </InputLabel>
+              <Input
+                id="input"
+                value={nickname}
+                onChange={handleNicknameChange}
+                onKeyPress={handleNicknameSubmit}
+                required
+              />
+              {!isFormValid && nickname.length <= 3 && (
+                <FormHelperText id="name-error-text">
+                  Nickname is too short!
+                </FormHelperText>
+              )}
+              {!isFormValid && nickname.length >= 20 && (
+                <FormHelperText id="name-error-text">
+                  Nickname is too long!
+                </FormHelperText>
+              )}
+            </FormControl>
+          ) : (
+            <div onClick={allowNicknameEdit && toggleNicknameForm}>
+              {/*Display nickname box and whether it's editable*/}
+              <span id="nickname">{nickname}</span>
+              {user.isLocal() && allowNicknameEdit && (
+                <span id=""> (edit)</span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {user && user.getStreamManager() ? (
         <div className="streamComponent">
-          <OvVideoComponent user={user} mutedSound={mutedSound} />
+          <OvVideoComponent user={user} muted={muted} />
+          {/*Show stream mic and camera status icons at bottom left*/}
           <div id="statusIcons">
             {!user.isVideoActive() ? (
               <div id="camIcon">
@@ -103,9 +110,10 @@ function StreamComponent(props) {
             ) : null}
           </div>
           <div>
+            {/*Show volume controls for remote user streams*/}
             {!user.isLocal() && (
               <IconButton id="volumeButton" onClick={toggleSound}>
-                {mutedSound ? <VolumeOff color="secondary" /> : <VolumeUp />}
+                {muted ? <VolumeOff color="secondary" /> : <VolumeUp />}
               </IconButton>
             )}
           </div>
@@ -117,11 +125,13 @@ function StreamComponent(props) {
 
 StreamComponent.propTypes = {
   user: PropTypes.object.isRequired,
+  showNickname: PropTypes.bool,
   allowNicknameEdit: PropTypes.bool,
   handleNickname: PropTypes.func,
 };
 
 StreamComponent.defaultProps = {
+  showNickname: true,
   allowNicknameEdit: true,
 };
 
