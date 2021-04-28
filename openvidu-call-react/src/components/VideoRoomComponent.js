@@ -23,6 +23,8 @@ class VideoRoomComponent extends Component {
         this.layout = new OpenViduLayout();
         let sessionName = this.props.sessionName ? this.props.sessionName : 'SessionA';
         let userName = this.props.user ? this.props.user : 'OpenVidu_User' + Math.floor(Math.random() * 100);
+        this.remotes = [];
+        this.localUserAccessAllowed = false;
         this.state = {
             mySessionId: sessionName,
             myUserName: userName,
@@ -89,7 +91,6 @@ class VideoRoomComponent extends Component {
             },
             () => {
                 this.subscribeToStreamCreated();
-
                 this.connectToSession();
             },
         );
@@ -143,11 +144,16 @@ class VideoRoomComponent extends Component {
         });
 
         if (this.state.session.capabilities.publish) {
-            this.state.session.publish(publisher).then(() => {
-                if (this.props.joinSession) {
-                    this.props.joinSession();
-                }
+            publisher.on('accessAllowed' , () => {
+                this.state.session.publish(publisher).then(() => {
+                    this.updateSubscribers();
+                    this.localUserAccessAllowed = true;
+                    if (this.props.joinSession) {
+                        this.props.joinSession();
+                    }
+                });
             });
+
         }
         localUser.setNickname(this.state.myUserName);
         localUser.setConnectionId(this.state.session.connection.connectionId);
@@ -163,6 +169,26 @@ class VideoRoomComponent extends Component {
                 publisher.videos[0].video.parentElement.classList.remove('custom-class');
             });
         });
+    }
+
+    updateSubscribers() {
+        var subscribers = this.remotes;
+        this.setState(
+            {
+                subscribers: subscribers,
+            },
+            () => {
+                if (this.state.localUser) {
+                    this.sendSignalUserChanged({
+                        isAudioActive: this.state.localUser.isAudioActive(),
+                        isVideoActive: this.state.localUser.isVideoActive(),
+                        nickname: this.state.localUser.getNickname(),
+                        isScreenShareActive: this.state.localUser.isScreenShareActive(),
+                    });
+                }
+                this.updateLayout();
+            },
+        );
     }
 
     leaveSession() {
@@ -221,7 +247,7 @@ class VideoRoomComponent extends Component {
     subscribeToStreamCreated() {
         this.state.session.on('streamCreated', (event) => {
             const subscriber = this.state.session.subscribe(event.stream, undefined);
-            var subscribers = this.state.subscribers;
+            // var subscribers = this.state.subscribers;
             subscriber.on('streamPlaying', (e) => {
                 this.checkSomeoneShareScreen();
                 subscriber.videos[0].video.parentElement.classList.remove('custom-class');
@@ -232,23 +258,10 @@ class VideoRoomComponent extends Component {
             newUser.setType('remote');
             const nickname = event.stream.connection.data.split('%')[0];
             newUser.setNickname(JSON.parse(nickname).clientData);
-            subscribers.push(newUser);
-            this.setState(
-                {
-                    subscribers: subscribers,
-                },
-                () => {
-                    if (this.state.localUser) {
-                        this.sendSignalUserChanged({
-                            isAudioActive: this.state.localUser.isAudioActive(),
-                            isVideoActive: this.state.localUser.isVideoActive(),
-                            nickname: this.state.localUser.getNickname(),
-                            isScreenShareActive: this.state.localUser.isScreenShareActive(),
-                        });
-                    }
-                    this.updateLayout();
-                },
-            );
+            this.remotes.push(newUser);
+            if(this.localUserAccessAllowed) {
+                this.updateSubscribers();
+            }
         });
     }
 
