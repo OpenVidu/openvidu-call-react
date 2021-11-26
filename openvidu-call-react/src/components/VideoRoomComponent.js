@@ -17,7 +17,7 @@ class VideoRoomComponent extends Component {
         super(props);
         this.OPENVIDU_SERVER_URL = this.props.openviduServerUrl
             ? this.props.openviduServerUrl
-            : 'https://' + window.location.hostname + ':4443';
+            : 'https://demos.openvidu.io';
         this.OPENVIDU_SERVER_SECRET = this.props.openviduSecret ? this.props.openviduSecret : 'MY_SECRET';
         this.hasBeenUpdated = false;
         this.layout = new OpenViduLayout();
@@ -32,6 +32,7 @@ class VideoRoomComponent extends Component {
             localUser: undefined,
             subscribers: [],
             chatDisplay: 'none',
+            currentVideoDevice: undefined,
         };
 
         this.joinSession = this.joinSession.bind(this);
@@ -42,6 +43,7 @@ class VideoRoomComponent extends Component {
         this.micStatusChanged = this.micStatusChanged.bind(this);
         this.nicknameChanged = this.nicknameChanged.bind(this);
         this.toggleFullscreen = this.toggleFullscreen.bind(this);
+        this.switchCamera = this.switchCamera.bind(this);
         this.screenShare = this.screenShare.bind(this);
         this.stopScreenShare = this.stopScreenShare.bind(this);
         this.closeDialogExtension = this.closeDialogExtension.bind(this);
@@ -132,10 +134,13 @@ class VideoRoomComponent extends Component {
             });
     }
 
-    connectWebCam() {
+    async connectWebCam() {
+        var devices = await this.OV.getDevices();
+        var videoDevices = devices.filter(device => device.kind === 'videoinput');
+
         let publisher = this.OV.initPublisher(undefined, {
             audioSource: undefined,
-            videoSource: undefined,
+            videoSource: videoDevices[0].deviceId,
             publishAudio: localUser.isAudioActive(),
             publishVideo: localUser.isVideoActive(),
             resolution: '640x480',
@@ -163,7 +168,7 @@ class VideoRoomComponent extends Component {
         this.subscribeToStreamDestroyed();
         this.sendSignalUserChanged({ isScreenShareActive: localUser.isScreenShareActive() });
 
-        this.setState({ localUser: localUser }, () => {
+        this.setState({ currentVideoDevice: videoDevices[0], localUser: localUser }, () => {
             this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
                 this.updateLayout();
                 publisher.videos[0].video.parentElement.classList.remove('custom-class');
@@ -353,6 +358,41 @@ class VideoRoomComponent extends Component {
         }
     }
 
+    async switchCamera() {
+        try{
+            const devices = await this.OV.getDevices()
+            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+            if(videoDevices && videoDevices.length > 1) {
+
+                var newVideoDevice = videoDevices.filter(device => device.deviceId !== this.state.currentVideoDevice.deviceId)
+
+                if (newVideoDevice.length > 0) {
+                    // Creating a new publisher with specific videoSource
+                    // In mobile devices the default and first camera is the front one
+                    var newPublisher = this.OV.initPublisher(undefined, {
+                        audioSource: undefined,
+                        videoSource: newVideoDevice[0].deviceId,
+                        publishAudio: localUser.isAudioActive(),
+                        publishVideo: localUser.isVideoActive(),
+                        mirror: true
+                    });
+
+                    //newPublisher.once("accessAllowed", () => {
+                    await this.state.session.unpublish(this.state.localUser.getStreamManager());
+                    await this.state.session.publish(newPublisher)
+                    this.state.localUser.setStreamManager(newPublisher);
+                    this.setState({
+                        currentVideoDevice: newVideoDevice,
+                        localUser: localUser,
+                    });
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     screenShare() {
         const videoSource = navigator.userAgent.indexOf('Firefox') !== -1 ? 'window' : 'screen';
         const publisher = this.OV.initPublisher(
@@ -467,6 +507,7 @@ class VideoRoomComponent extends Component {
                     screenShare={this.screenShare}
                     stopScreenShare={this.stopScreenShare}
                     toggleFullscreen={this.toggleFullscreen}
+                    switchCamera={this.switchCamera}
                     leaveSession={this.leaveSession}
                     toggleChat={this.toggleChat}
                 />
