@@ -23,6 +23,8 @@ class VideoRoomComponent extends Component {
         this.layout = new OpenViduLayout();
         let sessionName = this.props.sessionName ? this.props.sessionName : 'SessionA';
         let userName = this.props.user ? this.props.user : 'OpenVidu_User' + Math.floor(Math.random() * 100);
+        this.remotes = [];
+        this.localUserAccessAllowed = false;
         this.state = {
             mySessionId: sessionName,
             myUserName: userName,
@@ -32,6 +34,7 @@ class VideoRoomComponent extends Component {
             chatDisplay: 'none',
             isFrontCamera: true,
             isToggleable: false,
+            currentVideoDevice: undefined,
         };
 
         this.joinSession = this.joinSession.bind(this);
@@ -42,6 +45,7 @@ class VideoRoomComponent extends Component {
         this.micStatusChanged = this.micStatusChanged.bind(this);
         this.nicknameChanged = this.nicknameChanged.bind(this);
         this.toggleFullscreen = this.toggleFullscreen.bind(this);
+        this.switchCamera = this.switchCamera.bind(this);
         this.screenShare = this.screenShare.bind(this);
         this.stopScreenShare = this.stopScreenShare.bind(this);
         this.closeDialogExtension = this.closeDialogExtension.bind(this);
@@ -97,7 +101,6 @@ class VideoRoomComponent extends Component {
             },
             () => {
                 this.subscribeToStreamCreated();
-
                 this.connectToSession();
             },
         );
@@ -204,8 +207,66 @@ class VideoRoomComponent extends Component {
                     this.updateLayout();
                     publisher.videos[0].video.parentElement.classList.remove('custom-class');
                 });
+    // async connectWebCam() {
+    //     var devices = await this.OV.getDevices();
+    //     var videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+    //     let publisher = this.OV.initPublisher(undefined, {
+    //         audioSource: undefined,
+    //         videoSource: videoDevices[0].deviceId,
+    //         publishAudio: localUser.isAudioActive(),
+    //         publishVideo: localUser.isVideoActive(),
+    //         resolution: '640x480',
+    //         frameRate: 30,
+    //         insertMode: 'APPEND',
+    //     });
+
+    //     if (this.state.session.capabilities.publish) {
+    //         publisher.on('accessAllowed' , () => {
+    //             this.state.session.publish(publisher).then(() => {
+    //                 this.updateSubscribers();
+    //                 this.localUserAccessAllowed = true;
+    //                 if (this.props.joinSession) {
+    //                     this.props.joinSession();
+    //                 }
+    //             });
+    //         });
+
+    //     }
+    //     localUser.setNickname(this.state.myUserName);
+    //     localUser.setConnectionId(this.state.session.connection.connectionId);
+    //     localUser.setScreenShareActive(false);
+    //     localUser.setStreamManager(publisher);
+    //     this.subscribeToUserChanged();
+    //     this.subscribeToStreamDestroyed();
+    //     this.sendSignalUserChanged({ isScreenShareActive: localUser.isScreenShareActive() });
+
+    //     this.setState({ currentVideoDevice: videoDevices[0], localUser: localUser }, () => {
+    //         this.state.localUser.getStreamManager().on('streamPlaying', (e) => {
+    //             this.updateLayout();
+    //             publisher.videos[0].video.parentElement.classList.remove('custom-class');
             });
         });
+    }
+
+    updateSubscribers() {
+        var subscribers = this.remotes;
+        this.setState(
+            {
+                subscribers: subscribers,
+            },
+            () => {
+                if (this.state.localUser) {
+                    this.sendSignalUserChanged({
+                        isAudioActive: this.state.localUser.isAudioActive(),
+                        isVideoActive: this.state.localUser.isVideoActive(),
+                        nickname: this.state.localUser.getNickname(),
+                        isScreenShareActive: this.state.localUser.isScreenShareActive(),
+                    });
+                }
+                this.updateLayout();
+            },
+        );
     }
 
     leaveSession() {
@@ -264,7 +325,7 @@ class VideoRoomComponent extends Component {
     subscribeToStreamCreated() {
         this.state.session.on('streamCreated', (event) => {
             const subscriber = this.state.session.subscribe(event.stream, undefined);
-            var subscribers = this.state.subscribers;
+            // var subscribers = this.state.subscribers;
             subscriber.on('streamPlaying', (e) => {
                 this.checkSomeoneShareScreen();
                 subscriber.videos[0].video.parentElement.classList.remove('custom-class');
@@ -275,23 +336,10 @@ class VideoRoomComponent extends Component {
             newUser.setType('remote');
             const nickname = event.stream.connection.data.split('%')[0];
             newUser.setNickname(JSON.parse(nickname).clientData);
-            subscribers.push(newUser);
-            this.setState(
-                {
-                    subscribers: subscribers,
-                },
-                () => {
-                    if (this.state.localUser) {
-                        this.sendSignalUserChanged({
-                            isAudioActive: this.state.localUser.isAudioActive(),
-                            isVideoActive: this.state.localUser.isVideoActive(),
-                            nickname: this.state.localUser.getNickname(),
-                            isScreenShareActive: this.state.localUser.isScreenShareActive(),
-                        });
-                    }
-                    this.updateLayout();
-                },
-            );
+            this.remotes.push(newUser);
+            if(this.localUserAccessAllowed) {
+                this.updateSubscribers();
+            }
         });
     }
 
@@ -380,6 +428,41 @@ class VideoRoomComponent extends Component {
             } else if (document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();
             }
+        }
+    }
+
+    async switchCamera() {
+        try{
+            const devices = await this.OV.getDevices()
+            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+            if(videoDevices && videoDevices.length > 1) {
+
+                var newVideoDevice = videoDevices.filter(device => device.deviceId !== this.state.currentVideoDevice.deviceId)
+
+                if (newVideoDevice.length > 0) {
+                    // Creating a new publisher with specific videoSource
+                    // In mobile devices the default and first camera is the front one
+                    var newPublisher = this.OV.initPublisher(undefined, {
+                        audioSource: undefined,
+                        videoSource: newVideoDevice[0].deviceId,
+                        publishAudio: localUser.isAudioActive(),
+                        publishVideo: localUser.isVideoActive(),
+                        mirror: true
+                    });
+
+                    //newPublisher.once("accessAllowed", () => {
+                    await this.state.session.unpublish(this.state.localUser.getStreamManager());
+                    await this.state.session.publish(newPublisher)
+                    this.state.localUser.setStreamManager(newPublisher);
+                    this.setState({
+                        currentVideoDevice: newVideoDevice,
+                        localUser: localUser,
+                    });
+                }
+            }
+        } catch (e) {
+            console.error(e);
         }
     }
 
@@ -514,6 +597,7 @@ class VideoRoomComponent extends Component {
                     screenShare={this.screenShare}
                     stopScreenShare={this.stopScreenShare}
                     toggleFullscreen={this.toggleFullscreen}
+                    switchCamera={this.switchCamera}
                     leaveSession={this.leaveSession}
                     toggleChat={this.toggleChat}
                     toggleCamera={this.toggleCamera}
