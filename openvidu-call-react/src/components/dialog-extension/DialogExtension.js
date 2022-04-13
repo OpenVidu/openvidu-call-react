@@ -1,74 +1,58 @@
-import React, { Component } from 'react';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import './DialogExtension.css';
+import React, { useState } from "react";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import "./DialogExtension.css";
 
-export default class DialogExtensionComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.openviduExtensionUrl =
-            'https://chrome.google.com/webstore/detail/openvidu-screensharing/lfcgfepafnobdloecchnfaclibenjold';
-        //isInstalled: boolean;
+const DialogExtensionComponent = (props) => {
+  const [isInstalled, setIsInstalled] = useState(false);
+  const Url = process.env.OPEN_VIDU_URL;
 
-        this.state = {
-            isInstalled: false,
-        };
-        this.goToChromePage = this.goToChromePage.bind(this);
-        this.onNoClick = this.onNoClick.bind(this);
-        this.refreshBrowser = this.refreshBrowser.bind(this);
-    }
+  const onNoClick = () => {
+    // this.cancel.emit();
+    props.cancelClicked();
+  };
 
-    componentWillReceiveProps(props) {}
+  const goToChromePage = () => {
+    window.open(Url);
+    setIsInstalled(true);
+  };
 
-    componentDidMount() {}
+  const refreshBrowser = () => window.location.reload();
 
-    onNoClick() {
-        // this.cancel.emit();
-        this.props.cancelClicked();
-    }
+  return (
+    <div>
+      {props && props.showDialog ? (
+        <div id="dialogExtension">
+          <Card id="card">
+            <CardContent>
+              <Typography color="textSecondary">Hello</Typography>
+              <Typography color="textSecondary">
+                You need install this chrome extension and refresh the browser
+                for can share your screen.
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small" onClick={onNoClick}>
+                Cancel
+              </Button>
 
-    goToChromePage() {
-        window.open(this.openviduExtensionUrl);
-        this.setState({ isInstalled: true });
-    }
+              <Button size="small" onClick={goToChromePage}>
+                Install
+              </Button>
+              {isInstalled ? (
+                <Button size="small" onClick={refreshBrowser}>
+                  Refresh
+                </Button>
+              ) : null}
+            </CardActions>
+          </Card>
+        </div>
+      ) : null}
+    </div>
+  );
+};
 
-    refreshBrowser() {
-        window.location.reload();
-    }
-
-    render() {
-        return (
-            <div>
-                {this.props && this.props.showDialog ? (
-                    <div id="dialogExtension">
-                        <Card id="card">
-                            <CardContent>
-                                <Typography color="textSecondary">Hello</Typography>
-                                <Typography color="textSecondary">
-                                    You need install this chrome extension and refresh the browser for can share your screen.
-                                </Typography>
-                            </CardContent>
-                            <CardActions>
-                                <Button size="small" onClick={this.onNoClick}>
-                                    Cancel
-                                </Button>
-
-                                <Button size="small" onClick={this.goToChromePage}>
-                                    Install
-                                </Button>
-                                {this.state.isInstalled ? (
-                                    <Button size="small" onClick={this.refreshBrowser}>
-                                        Refresh
-                                    </Button>
-                                ) : null}
-                            </CardActions>
-                        </Card>
-                    </div>
-                ) : null}
-            </div>
-        );
-    }
-}
+export default DialogExtensionComponent;
