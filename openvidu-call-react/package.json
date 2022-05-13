@@ -20,6 +20,7 @@
     "scripts": {
         "build": "react-scripts build",
         "build:openvidu-react": "npm install --prefix ../library/ && node library-copy.js && cd ../library && npm run create-library",
+        "build:openvidu-react-ci": "node library-copy.js && cd ../library && npm run create-library",
         "eject": "react-scripts eject",
         "start": "react-scripts start",
         "test": "react-scripts test --env=jsdom"
