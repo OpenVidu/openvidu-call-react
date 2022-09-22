@@ -13,7 +13,7 @@
         "openvidu-browser": "2.23.0", 
         "react": "16.13.1", 
         "react-dom": "16.13.1", 
-        "react-scripts": "^3.4.3"
+        "react-scripts": "^5.0.1"
     }, 
     "name": "openvidu-call-react", 
     "private": true, 
