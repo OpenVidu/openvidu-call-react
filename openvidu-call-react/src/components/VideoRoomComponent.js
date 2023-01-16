@@ -1,24 +1,22 @@
-import React, { Component } from 'react';
 import axios from 'axios';
-import './VideoRoomComponent.css';
 import { OpenVidu } from 'openvidu-browser';
-import StreamComponent from './stream/StreamComponent';
-import DialogExtensionComponent from './dialog-extension/DialogExtension';
+import React, { Component } from 'react';
 import ChatComponent from './chat/ChatComponent';
+import DialogExtensionComponent from './dialog-extension/DialogExtension';
+import StreamComponent from './stream/StreamComponent';
+import './VideoRoomComponent.css';
 
 import OpenViduLayout from '../layout/openvidu-layout';
 import UserModel from '../models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 
 var localUser = new UserModel();
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/';
+
 
 class VideoRoomComponent extends Component {
     constructor(props) {
         super(props);
-        this.OPENVIDU_SERVER_URL = this.props.openviduServerUrl
-            ? this.props.openviduServerUrl
-            : 'https://' + window.location.hostname + ':4443';
-        this.OPENVIDU_SERVER_SECRET = this.props.openviduSecret ? this.props.openviduSecret : 'MY_SECRET';
         this.hasBeenUpdated = false;
         this.layout = new OpenViduLayout();
         let sessionName = this.props.sessionName ? this.props.sessionName : 'SessionA';
@@ -91,28 +89,29 @@ class VideoRoomComponent extends Component {
             {
                 session: this.OV.initSession(),
             },
-            () => {
+            async () => {
                 this.subscribeToStreamCreated();
-                this.connectToSession();
+                await this.connectToSession();
             },
         );
     }
 
-    connectToSession() {
+    async connectToSession() {
         if (this.props.token !== undefined) {
             console.log('token received: ', this.props.token);
             this.connect(this.props.token);
         } else {
-            this.getToken().then((token) => {
+            try {
+                var token = await this.getToken();
                 console.log(token);
                 this.connect(token);
-            }).catch((error) => {
+            } catch (error) {
+                console.error('There was an error getting the token:', error.code, error.message);
                 if(this.props.error){
                     this.props.error({ error: error.error, messgae: error.message, code: error.code, status: error.status });
                 }
-                console.log('There was an error getting the token:', error.code, error.message);
                 alert('There was an error getting the token:', error.message);
-              });
+            }
         }
     }
 
@@ -135,6 +134,7 @@ class VideoRoomComponent extends Component {
     }
 
     async connectWebCam() {
+        await this.OV.getUserMedia({ audioSource: undefined, videoSource: undefined });
         var devices = await this.OV.getDevices();
         var videoDevices = devices.filter(device => device.kind === 'videoinput');
 
@@ -541,77 +541,37 @@ class VideoRoomComponent extends Component {
     }
 
     /**
-     * --------------------------
-     * SERVER-SIDE RESPONSIBILITY
-     * --------------------------
-     * These methods retrieve the mandatory user token from OpenVidu Server.
-     * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-     * the API REST, openvidu-java-client or openvidu-node-client):
-     *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
-     *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
-     *   3) The token must be consumed in Session.connect() method
+     * --------------------------------------------
+     * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+     * --------------------------------------------
+     * The methods below request the creation of a Session and a Token to
+     * your application server. This keeps your OpenVidu deployment secure.
+     *
+     * In this sample code, there is no user control at all. Anybody could
+     * access your application server endpoints! In a real production
+     * environment, your application server must identify the user to allow
+     * access to the endpoints.
+     *
+     * Visit https://docs.openvidu.io/en/stable/application-server to learn
+     * more about the integration of OpenVidu in your application server.
      */
-
-    getToken() {
-        return this.createSession(this.state.mySessionId).then((sessionId) => this.createToken(sessionId));
+    async getToken() {
+        const sessionId = await this.createSession(this.state.mySessionId);
+        return await this.createToken(sessionId);
     }
 
-    createSession(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({ customSessionId: sessionId });
-            axios
-                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('CREATE SESION', response);
-                    resolve(response.data.id);
-                })
-                .catch((response) => {
-                    var error = Object.assign({}, response);
-                    if (error.response && error.response.status === 409) {
-                        resolve(sessionId);
-                    } else {
-                        console.log(error);
-                        console.warn(
-                            'No connection to OpenVidu Server. This may be a certificate error at ' + this.OPENVIDU_SERVER_URL,
-                        );
-                        if (
-                            window.confirm(
-                                'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"\n\nClick OK to navigate and accept it. ' +
-                                    'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"',
-                            )
-                        ) {
-                            window.location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');
-                        }
-                    }
-                });
+    async createSession(sessionId) {
+        const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
+            headers: { 'Content-Type': 'application/json', },
         });
+        return response.data; // The sessionId
     }
 
-    createToken(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({});
-            axios
-                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('TOKEN', response);
-                    resolve(response.data.token);
-                })
-                .catch((error) => reject(error));
+    async createToken(sessionId) {
+        const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
+            headers: { 'Content-Type': 'application/json', },
         });
+        return response.data; // The token
     }
 }
 export default VideoRoomComponent;
