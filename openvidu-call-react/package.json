@@ -1,28 +1,28 @@
 {
-    "browserslist": [
-        ">0.2%", 
-        "not dead", 
-        "not ie <= 11", 
-        "not op_mini all"
-    ], 
-    "dependencies": {
-        "@material-ui/core": "4.9.10", 
-        "@material-ui/icons": "4.9.1", 
-        "axios": "0.19.2", 
-        "jquery": "3.5.0", 
-        "openvidu-browser": "2.25.0", 
-        "react": "16.13.1", 
-        "react-dom": "16.13.1", 
-        "react-scripts": "^3.4.3"
-    }, 
-    "name": "openvidu-call-react", 
-    "private": true, 
-    "scripts": {
-        "build": "react-scripts build", 
-        "build:openvidu-react": "npm install --prefix ../library/ && node library-copy.js && cd ../library && npm run create-library", 
-        "eject": "react-scripts eject", 
-        "start": "react-scripts start", 
-        "test": "react-scripts test --env=jsdom"
-    }, 
-    "version": "2.25.0"
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "@material-ui/core": "4.9.10",
+    "@material-ui/icons": "4.9.1",
+    "axios": "0.19.2",
+    "jquery": "3.5.0",
+    "openvidu-browser": "2.26.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-scripts": "^3.4.3"
+  },
+  "name": "openvidu-call-react",
+  "private": true,
+  "scripts": {
+    "build": "react-scripts build",
+    "build:openvidu-react": "npm install --prefix ../library/ && node library-copy.js && cd ../library && npm run create-library",
+    "eject": "react-scripts eject",
+    "start": "react-scripts start",
+    "test": "react-scripts test --env=jsdom"
+  },
+  "version": "2.26.0"
 }
