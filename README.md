@@ -8,6 +8,14 @@
 
 openvidu-call-react
 ===
+
+> [!WARNING]
+> **This repository is deprecated.** The closest current reference application is
+> **[LiveKit Meet](https://meet.livekit.io/)** — LiveKit's React reference app, already
+> compatible with OpenVidu 3 since OpenVidu is API-compatible with LiveKit. See
+> [React Components](https://openvidu.io/latest/docs/ui-components/react-components/)
+> in the docs.
+
 You can see the documentation [here](https://docs.openvidu.io/en/stable/demos/openvidu-call-react/)
 
 
